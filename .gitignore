@@ -27,6 +27,11 @@
 hs_err_pid*
 replay_pid*
 
+application.properties
+application.yml
+application-*.properties
+application-*.yml
+server/src/main/resources/application.properties
 ### NextJS ###
 # dependencies
 /node_modules

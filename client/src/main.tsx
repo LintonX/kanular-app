@@ -10,6 +10,7 @@ import Layout from "./components/Layout.tsx";
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/auth/dashboard", element: <Dashboard /> },
+  { path: "/auth/dashboard/:boards", element: <Dashboard /> },
   { path: "*", element: <FourOFour /> },
 ]);
 
