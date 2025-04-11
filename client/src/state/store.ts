@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { baseApi } from '../features/api/base-api';
-import userSessionReducer from '../features/user-session/userSessionSlice';
+import userSessionReducer from '../features/slice/userSession/userSessionSlice';
 
 export const store = configureStore({
   reducer: {

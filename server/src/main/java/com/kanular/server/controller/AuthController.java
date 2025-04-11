@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -43,24 +44,31 @@ public class AuthController {
     }
 
     @PostMapping("/api/v1/auth/login")
-    public ResponseEntity<Void> login(@RequestBody UserLoginCredential userLoginCredential, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<UserAccountDto> login(@RequestBody UserLoginCredential userLoginCredential, HttpServletRequest request, HttpServletResponse response) {
         log.info("➡️ Entered: AuthController.login()");
         log.info(userLoginCredential.toString());
 
-        final String jwt = authService.login(userLoginCredential);
+        final Pair<String, UserAccountDto> result = authService.login(userLoginCredential);
 
-        if (jwt != null) {
+        if (result != null) {
+            final String jwt = result.getFirst();
+            final UserAccountDto userAccountDto = result.getSecond();
+            log.info("userAccountDto = {}", userAccountDto);
             final boolean isProduction = MODE.equals("production");
+
             log.info("isProduction = {}", isProduction);
             log.info("Created jwt = {}", jwt);
+
             Cookie cookie = new Cookie(Constants.KANULAR_SESSION_KEY, jwt);
             cookie.setHttpOnly(true);
             cookie.setSecure(isProduction);
             cookie.setPath("/");
             cookie.setMaxAge((int) Duration.ofDays(7).getSeconds());
             response.addCookie(cookie);
+
             log.info("Cookie = {}", cookie.toString());
-            return new ResponseEntity<>(HttpStatus.OK);
+
+            return new ResponseEntity<>(userAccountDto, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

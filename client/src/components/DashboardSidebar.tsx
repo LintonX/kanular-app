@@ -12,7 +12,7 @@ export default function DashboardSidebar({
   const setSelectedItem = dashboardContext.setSelectedItem;
 
   return (
-    <div className="w-64 min-w-64 h-screen bg-secondary-black text-white px-7 py-7 rounded-2xl mx-3 mb-3">
+    <div className="w-64 min-w-64 h-auto bg-secondary-black text-white px-7 pb-7">
       <div className="flex flex-col">
         <h1 className="text-3xl font-semibold">Dashboard</h1>
         <div className="flex mt-16">

@@ -1,6 +1,8 @@
 package com.kanular.server.utils;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.kanular.server.models.UserAccountDto;
+import com.kanular.server.models.UserCredential;
 import com.kanular.server.models.entities.UserAccount;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -23,6 +25,10 @@ import java.util.Base64.Encoder;
 @Slf4j
 public class CryptoUtil {
 
+    private static final int COST = 10;
+
+    private final BCrypt.Hasher bCryptHasher;
+    private final BCrypt.Verifyer bCryptVerifyer;
     private final Cipher cipher;
     private final SecretKey secretKey;
     private final Encoder encoder;
@@ -45,5 +51,18 @@ public class CryptoUtil {
         log.info("Ciphered {} = {}", field, cipherText);
         log.info("Base64 {} = {}", field, base64);
         return base64;
+    }
+
+    public String hashPassword(@NonNull String password) {
+        log.info("➡️ Entered: AuthService.hashPassword()");
+        return bCryptHasher.hashToString(COST, password.toCharArray());
+    }
+
+    public boolean verifyPassword(@NonNull UserCredential userLoginCredential,
+                                  @NonNull UserAccount retrievedUserAccount) {
+        return bCryptVerifyer.verify(
+                userLoginCredential.getPassword().toCharArray(),
+                retrievedUserAccount.getPassword().toCharArray()
+        ).verified;
     }
 }

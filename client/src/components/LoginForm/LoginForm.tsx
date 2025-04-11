@@ -3,14 +3,17 @@ import { Loader2 } from "lucide-react";
 import PersonIcon from "@mui/icons-material/Person";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "@/features/api/auth-api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toastNotifyError } from "@/lib/utils";
+import { useDispatch } from "react-redux";
+import { setUserSession } from "@/features/slice/userSession/userSessionSlice";
 
 export default function LogIn() {
-  const [login, { data, isLoading, isError, isSuccess, isUninitialized }] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const loginErrorMessage = "Incorrect email and/or password.";
 
@@ -18,22 +21,15 @@ export default function LogIn() {
     console.log("in handleLogin function", email, password);
     event.preventDefault();
     try {
-      await login({ email: email, password: password }).unwrap();
-      console.log("success", data);
+      const userAccountDto = await login({ email: email, password: password }).unwrap();
+      console.log("success", userAccountDto);
+      dispatch(setUserSession(userAccountDto))
+      navigate("/auth/dashboard");
     } catch (error) {
       console.log("failure", error);
-    }
-  };
-
-  useEffect(() => {
-    console.log("in useEffect", {isError, isSuccess, isUninitialized});
-    if (isUninitialized || isLoading) return;
-    if (isSuccess) {
-      navigate("/auth/dashboard");
-    } else if (isError) {
       toastNotifyError(loginErrorMessage);
     }
-  }, [isError, isSuccess, isLoading, isUninitialized, navigate]);
+  };
 
   return (
     <>

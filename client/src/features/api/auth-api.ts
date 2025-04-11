@@ -12,7 +12,7 @@ const authApi = baseApi.injectEndpoints({
         body: newUserCredentials,
       }),
     }),
-    login: builder.mutation<boolean, LoginCredential>({
+    login: builder.mutation<UserAccountDto, LoginCredential>({
       query: (userCredentials) => ({
         url: "/v1/auth/login",
         method: "POST",

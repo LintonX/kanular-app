@@ -28,8 +28,28 @@ export type UserAccountDto = {
   email: string;
 }
 
-export type UserSession = {
-  userAccountDto: UserAccountDto;
-  isAuthenticated: boolean;
-  jwt: string;
+export type UserSessionState = {
+  userAccount: UserAccountDto;
+  isAuth: boolean;
 }
+
+// export type KanbanBoard = {
+//   id: string;
+//   parentId: string; 
+//   isPrimary: boolean;
+// }
+
+// export type KanbanColumn = {
+//   id: string;
+//   parentId: string;
+//   stage: string; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
+// }
+
+// export type KanbanCard = {
+//   id: string;
+//   parentId: string;
+//   title: string;
+//   body: string;
+//   stage: string; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
+//   hasChildBoard: boolean;
+// }
