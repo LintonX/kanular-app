@@ -1,15 +1,11 @@
-import { Link } from "react-router-dom"
+import Home from "./pages/Home";
 
 function App() {
-
   return (
     <>
-      <div className="flex flex-col">
-        Home
-        <Link to={"/auth/dashboard"}><button className="cursor-pointer w-52 bg-red-400">dashboard</button></Link>
-      </div>
+      <Home />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

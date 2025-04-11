@@ -1,6 +1,6 @@
 import { Column } from "@/lib/types";
 import TaskCard from "./TaskCard";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 export default function ColumnCard({ column }: { column: Column }) {
   return (

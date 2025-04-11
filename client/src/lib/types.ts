@@ -13,3 +13,23 @@ export type Column = {
   title: string;
   index: number;
 };
+
+export type LoginCredential = {
+  email: string;
+  password: string;
+}
+
+export type SignUpCredential = LoginCredential & {
+  confirmPassword: string
+}
+
+export type UserAccountDto = {
+  id: string;
+  email: string;
+}
+
+export type UserSession = {
+  userAccountDto: UserAccountDto;
+  isAuthenticated: boolean;
+  jwt: string;
+}

@@ -31,7 +31,7 @@ application.properties
 application.yml
 application-*.properties
 application-*.yml
-server/src/main/resources/application.properties
+
 ### NextJS ###
 # dependencies
 /node_modules
