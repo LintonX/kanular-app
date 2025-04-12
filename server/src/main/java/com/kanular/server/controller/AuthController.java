@@ -1,10 +1,12 @@
 package com.kanular.server.controller;
 
+import com.kanular.server.models.CompleteKanbanBoard;
 import com.kanular.server.models.UserAccountDto;
 import com.kanular.server.models.UserLoginCredential;
 import com.kanular.server.models.UserSignUpCredential;
 import com.kanular.server.service.AuthService;
 import com.kanular.server.service.JwtService;
+import com.kanular.server.service.KanbanBoardService;
 import com.kanular.server.utils.Constants;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,12 +15,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -28,19 +30,22 @@ public class AuthController {
     private final String MODE;
     private final AuthService authService;
     private final JwtService jwtService;
+    private final KanbanBoardService kanbanBoardService;
 
     @PostMapping("/api/v1/auth/signup")
     public ResponseEntity<Void> signUp(@RequestBody UserSignUpCredential userSignUpCredential, HttpServletResponse response) {
         log.info("➡️ Entered: AuthController.signup()");
         log.info(userSignUpCredential.toString());
 
-        final boolean result = authService.signUp(userSignUpCredential);
+        final UserAccountDto newUserAccountDto =
+                authService.signUp(userSignUpCredential);
 
-        if (result) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (newUserAccountDto == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/api/v1/auth/login")
@@ -68,42 +73,35 @@ public class AuthController {
 
             log.info("Cookie = {}", cookie.toString());
 
-            return new ResponseEntity<>(userAccountDto, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(userAccountDto);
         }
 
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/api/v1/auth/userSession")
     public ResponseEntity<UserAccountDto> getUserSession(HttpServletRequest request) {
         log.info("➡️ Entered: AuthController.getUserFromSession()");
 
-        final Cookie[] cookies = request.getCookies();
-
         try {
-
-            String jwt = null;
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (Constants.KANULAR_SESSION_KEY.equals(cookie.getName())) {
-                        jwt = cookie.getValue();
-                        log.info("Kanular session value = {}", jwt);
-                        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
-                        if (userAccountDto != null) {
-                            log.info("Recovered session {}", userAccountDto);
-                            return new ResponseEntity<>(userAccountDto, HttpStatus.OK);
-                        }
-                        break;
-                    }
-                }
+            String jwt = jwtService.extractJwtFromCookies(request);
+            if (jwt == null) {
+                log.info("No JWT found in cookies.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-        } catch (Exception e) {
-            log.info(e.toString());
-            throw new RuntimeException(e);
-        }
-        log.info("Session invalid");
+            UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
+            if (userAccountDto == null) {
+                log.info("JWT verification failed.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
 
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            log.info("Session recovered: {}", userAccountDto);
+            return ResponseEntity.ok(userAccountDto);
+
+        } catch (Exception e) {
+            log.error("Exception in getUserSession: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

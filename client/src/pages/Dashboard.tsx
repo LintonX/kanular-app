@@ -6,11 +6,14 @@ import BoardView from "@/components/Board/BoardView";
 import AllBoardsView from "@/components/AllBoardsView";
 import { sidebarItems } from "@/lib/constants";
 import ProfileHeader from "@/components/ProfileHeader";
+import { useHydrateDashboardQuery } from "@/features/api/board-api";
 
 export default function Dashboard() {
   const param = useParams();
   const [query] = useSearchParams();
-  // const { data, isSuccess, isLoading, isError, error, isUninitialized } = useUserSessionQuery();
+  const {data, isError, isFetching} = useHydrateDashboardQuery();
+
+  console.log("HYDRATED DASHBOARD VIEW", data);
 
   if (param?.boards)
     console.log("user requested to show all boards -> ", param.boards);

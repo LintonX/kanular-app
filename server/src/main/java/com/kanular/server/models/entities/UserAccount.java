@@ -6,6 +6,7 @@ import lombok.*;
 import org.apache.catalina.User;
 
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 @Entity
 @Builder
@@ -16,8 +17,9 @@ import java.lang.reflect.Field;
 public class UserAccount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @Column(updatable = false, nullable = false)
+    @Builder.Default
+    private UUID id = UUID.randomUUID();
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -27,7 +29,7 @@ public class UserAccount {
 
     public UserAccountDto convertToUserAccountDto() {
         return UserAccountDto.builder()
-                .id(this.getId())
+                .id(this.getId().toString())
                 .email(this.getEmail())
                 .build();
     }

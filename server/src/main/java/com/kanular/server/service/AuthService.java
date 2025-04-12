@@ -1,26 +1,22 @@
 package com.kanular.server.service;
 
-import at.favre.lib.crypto.bcrypt.BCrypt.Hasher;
-import at.favre.lib.crypto.bcrypt.BCrypt.Verifyer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kanular.server.dal.repositories.UserRepository;
-import com.kanular.server.models.UserAccountDto;
-import com.kanular.server.models.UserCredential;
-import com.kanular.server.models.UserLoginCredential;
-import com.kanular.server.models.UserSignUpCredential;
+import com.kanular.server.models.*;
 import com.kanular.server.models.entities.UserAccount;
 import com.kanular.server.utils.CryptoUtil;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Service
@@ -28,26 +24,26 @@ import java.util.Optional;
 @Slf4j
 public class AuthService {
 
-    @Value("${spring.profiles.active}")
-    private static String MODE;
+    private String MODE;
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final CryptoUtil cryptoUtil;
+    private final KanbanBoardService kanbanBoardService;
 
-    public boolean signUp(@NonNull UserCredential userSignUpCredential) {
+    public UserAccountDto signUp(@NonNull UserCredential userSignUpCredential) {
 
         log.info("➡️ Entered: AuthService.signUp()");
 
         // user doesnt exist
         // user exists
         if (!(userSignUpCredential instanceof UserSignUpCredential)) {
-            return false;
+            return null;
         }
 
         // passwords dont match
         if (!userSignUpCredential.getPassword().equals(((UserSignUpCredential) userSignUpCredential).getConfirmPassword())) {
-            return false;
+            return null;
         }
 
         // create instance of new user
@@ -58,8 +54,15 @@ public class AuthService {
 
         // store new user instance in database
         final UserAccount storedUserAccount = userRepository.save(newUserAccount);
+        final CompleteKanbanBoard homeKanbanBoard =
+                kanbanBoardService.initHomeKanbanBoard(storedUserAccount.getId());
 
-        return true;
+        if (homeKanbanBoard == null) {
+            userRepository.delete(storedUserAccount);
+            return null;
+        }
+
+        return storedUserAccount.convertToUserAccountDto();
     }
 
     public Pair<String, UserAccountDto> login(@NonNull UserCredential userLoginCredential) {
@@ -84,9 +87,12 @@ public class AuthService {
 
         if (isPasswordVerified) {
             try {
-                final UserAccountDto userAccountDto = cryptoUtil.encrpytUserAccount(extractedUserAccount.convertToUserAccountDto());
-                return Pair.of(jwtService.createJwt(userAccountDto),  userAccountDto);
-            } catch (InvalidKeyException | JsonProcessingException | IllegalBlockSizeException | IllegalAccessException | BadPaddingException e) {
+//                final UserAccountDto userAccountDto = cryptoUtil.encrpytUserAccount(extractedUserAccount.convertToUserAccountDto());
+                return Pair.of(
+                        jwtService.createJwt(extractedUserAccount.convertToUserAccountDto()),
+                        cryptoUtil.encrpytUserAccount(extractedUserAccount.convertToUserAccountDto())
+                );
+            } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | JsonProcessingException | IllegalBlockSizeException | IllegalAccessException | BadPaddingException | InvalidAlgorithmParameterException e) {
                 log.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
