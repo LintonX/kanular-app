@@ -7,8 +7,8 @@ import { sidebarItems } from "@/lib/constants";
 import ProfileHeader from "@/components/ProfileHeader";
 import { useGetHomeBoardQuery } from "@/features/api/board-api";
 import { useDispatch } from "react-redux";
-import { setHomeBoard } from "@/features/slice/userSession/userSessionSlice";
-import AllPrimaryBoardsView from "@/components/AllBoardsView";
+import { setAllPrimaryBoards, setHomeBoard } from "@/features/slice/userSession/userSessionSlice";
+import AllPrimaryBoardsView from "@/components/AllPrimaryBoardsView";
 import CalendarView from "@/components/CalendarView";
 
 export default function Dashboard() {
@@ -25,7 +25,10 @@ export default function Dashboard() {
     isHome: true,
   });
 
-  if (homeBoard) dispatch(setHomeBoard(homeBoard));
+  if (homeBoard) {
+    dispatch(setHomeBoard(homeBoard))
+    dispatch(setAllPrimaryBoards([homeBoard.kanbanBoard]))
+  };
 
   console.log("home board view", homeBoard);
 

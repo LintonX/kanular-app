@@ -83,33 +83,14 @@ public class KanbanBoardService {
     public KanbanBoard[] getAllPrimaryBoards(@NonNull UUID parentId) {
         return kanbanBoardRepository.findAllByParentIdAndPrimaryBoardIsTrue(parentId).toArray(new KanbanBoard[0]);
     }
-
-    public CompleteKanbanBoard createKanbanBoard(@NonNull final UUID parentId,
-                                                 @NonNull final String title,
-                                                 boolean isPrimary) {
-        log.info("➡️ Entered: KanbanBoardService.createKanbanBoard()");
-
-        KanbanBoard kanbanBoard = null;
-
-        if (isPrimary) {
-//            kanbanBoard = kanbanBoardRepository.save(KanbanBoard.builder()
-//                    .parentId(parentId)
-//                    .primaryBoard(true)
-//                    .homeBoard(false)
-//                    .title(title)
-//                    .build()
-//            );
-            return createKanbanBoard(parentId, title, true, false);
-        } else {
-//            kanbanBoard = kanbanBoardRepository.save(KanbanBoard.builder()
-//                    .parentId(parentId)
-//                    .primaryBoard(false)
-//                    .homeBoard(false)
-//                    .build()
-//            );
-            return createKanbanBoard(parentId, title, false, false);
-        }
-    }
+//
+//    public CompleteKanbanBoard createKanbanBoard(@NonNull final UUID parentId,
+//                                                 @NonNull final String title,
+//                                                 boolean primaryBoard) {
+//        log.info("➡️ Entered: KanbanBoardService.createKanbanBoard()");
+//
+//        return createKanbanBoard(parentId, title, primaryBoard, false);
+//    }
 
     public CompleteKanbanBoard createKanbanBoard(UUID parentId, String title, boolean primaryBoard, boolean homeBoard) {
         final KanbanBoard kanbanBoard = kanbanBoardRepository.save(KanbanBoard.builder()
@@ -254,4 +235,14 @@ public class KanbanBoardService {
         );
     }
 
+//    @Transactional
+//    public void deleteBoard(@NonNull UUID boardId) {
+//        log.info("➡️ Entered: KanbanBoardService.deleteBoard()");
+//
+//        final KanbanBoard boardToBeDeleted = kanbanBoardRepository.findById(boardId)
+//                .orElseThrow(() -> new RuntimeException("Could not delete board: " + boardId + " as it was not found"));
+//
+//        ka
+//
+//    }
 }

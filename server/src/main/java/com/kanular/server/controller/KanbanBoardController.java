@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
@@ -67,10 +68,10 @@ public class KanbanBoardController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping("/api/v1/createNewPrimaryKanbanBoard")
+    @PostMapping(value = "/api/v1/createNewPrimaryKanbanBoard", consumes = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<CompleteKanbanBoard> createNewPrimaryKanbanBoard(@RequestBody String boardTitle,
                                                                            HttpServletRequest request) {
-        log.info("➡️ Entered: KanbanBoardController.createNewPrimaryKanbanBoard()");
+        log.info("➡️ Entered: KanbanBoardController.createNewPrimaryKanbanBoard() with {}", boardTitle);
 
         final String jwt = jwtService.extractJwtFromCookies(request);
         final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
@@ -79,10 +80,10 @@ public class KanbanBoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        final CompleteKanbanBoard completeKanbanBoard =
-                kanbanBoardService.createKanbanBoard(UUID.fromString(userAccountDto.getId()), boardTitle, true);
+        final CompleteKanbanBoard newCompletePrimaryBoard =
+                kanbanBoardService.createKanbanBoard(UUID.fromString(userAccountDto.getId()), boardTitle, true, false);
 
-        return ResponseEntity.status(HttpStatus.OK).body(completeKanbanBoard);
+        return ResponseEntity.status(HttpStatus.OK).body(newCompletePrimaryBoard);
 
     }
 
@@ -100,7 +101,7 @@ public class KanbanBoardController {
         }
 
         final CompleteKanbanBoard completeKanbanBoard =
-                kanbanBoardService.createKanbanBoard(UUID.fromString(parentId), title, false);
+                kanbanBoardService.createKanbanBoard(UUID.fromString(parentId), title, false, false);
 
         return ResponseEntity.status(HttpStatus.OK).body(completeKanbanBoard);
 
@@ -108,9 +109,9 @@ public class KanbanBoardController {
 
     @GetMapping("/api/v1/getKanbanBoardById")
     public ResponseEntity<CompleteKanbanBoard> getKanbanBoardById(@RequestParam String boardId,
-                                                              @RequestParam boolean isPrimary,
-                                                              @RequestParam boolean isHome,
-                                                              HttpServletRequest request) {
+                                                                  @RequestParam boolean isPrimary,
+                                                                  @RequestParam boolean isHome,
+                                                                  HttpServletRequest request) {
         log.info("➡️ Entered: KanbanBoardController.getKanbanBoardById()");
 
         final String jwt = jwtService.extractJwtFromCookies(request);
@@ -128,8 +129,8 @@ public class KanbanBoardController {
 
     @GetMapping("/api/v1/getKanbanBoardByParentId")
     public ResponseEntity<CompleteKanbanBoard> getKanbanBoardByParentId(@RequestParam boolean isPrimary,
-                                                              @RequestParam boolean isHome,
-                                                              HttpServletRequest request) {
+                                                                        @RequestParam boolean isHome,
+                                                                        HttpServletRequest request) {
         log.info("➡️ Entered: KanbanBoardController.getKanbanBoard()");
 
         final String jwt = jwtService.extractJwtFromCookies(request);
@@ -188,4 +189,19 @@ public class KanbanBoardController {
 
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
+
+//    @PostMapping("/api/v1/deleteBoard")
+//    public ResponseEntity<KanbanCard> deleteBoard(@RequestBody String boardId,
+//                                                 HttpServletRequest request) {
+//
+//        log.info("➡️ Entered: KanbanBoardController.deleteBoard()");
+//
+//        final String jwt = jwtService.extractJwtFromCookies(request);
+//        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
+//
+//        if (userAccountDto == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//        kanbanBoardService.deleteBoard(UUID.fromString(boardId));
+//    }
 }

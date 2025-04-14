@@ -15,7 +15,7 @@ export default function BoardCard({
         <h1 className="font-medium text-xl">{boardMetadata.title}</h1>
         <div className="flex">
           {boardMetadata.homeBoard ? (
-            <Star className="cursor-pointer" fill="yellow" stroke="none" size={starSize} />
+            <Star className="cursor-pointer" fill="white" stroke="none" size={starSize} />
           ) : (
             <StarOff size={starSize} />
           )}

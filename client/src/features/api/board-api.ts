@@ -5,12 +5,15 @@ import { baseApi } from "./base-api";
 
 const boardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getHomeBoard: builder.query<CompleteKanbanBoard, {isPrimary: boolean, isHome: boolean}>({
-      query: ({isPrimary, isHome}) => ({
+    getHomeBoard: builder.query<
+      CompleteKanbanBoard,
+      { isPrimary: boolean; isHome: boolean }
+    >({
+      query: ({ isPrimary, isHome }) => ({
         url: "/v1/getKanbanBoardByParentId",
         method: "GET",
-        params: {isPrimary, isHome}
-      })
+        params: { isPrimary, isHome },
+      }),
     }),
     hydrateDashboard: builder.query<KanbanBoard[], void>({
       query: () => ({
@@ -22,9 +25,12 @@ const boardApi = baseApi.injectEndpoints({
       query: () => ({
         url: "/v1/getAllPrimaryBoards",
         method: "GET",
-      })
+      }),
     }),
-    updateCardBody: builder.mutation<KanbanCard, { cardId: string; bodyValue: string }>({
+    updateCardBody: builder.mutation<
+      KanbanCard,
+      { cardId: string; bodyValue: string }
+    >({
       query: ({ cardId, bodyValue }) => ({
         url: "/v1/updateCardBody",
         method: "POST",
@@ -35,10 +41,27 @@ const boardApi = baseApi.injectEndpoints({
       query: (kanbanCard) => ({
         url: "/v1/createTask",
         method: "POST",
-        body: kanbanCard
-      })
-    })
+        body: kanbanCard,
+      }),
+    }),
+    createNewPrimaryBoard: builder.mutation<void, string>({
+      query: ( boardTitle ) => ({
+        url: "/v1/createNewPrimaryKanbanBoard",
+        method: "POST",
+        body: boardTitle,
+        headers: {
+          'Content-Type': 'text/plain',
+        }
+      }),
+    }),
   }),
 });
 
-export const { useGetHomeBoardQuery, useGetAllPrimaryBoardsQuery, useHydrateDashboardQuery, useUpdateCardBodyMutation, useCreateTaskMutation } = boardApi;
+export const {
+  useGetHomeBoardQuery,
+  useGetAllPrimaryBoardsQuery,
+  useHydrateDashboardQuery,
+  useUpdateCardBodyMutation,
+  useCreateTaskMutation,
+  useCreateNewPrimaryBoardMutation,
+} = boardApi;
