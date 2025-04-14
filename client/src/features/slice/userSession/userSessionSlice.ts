@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CompleteKanbanBoard, UserAccountDto, UserSessionState } from '@/lib/types';
+import { CompleteKanbanBoard, KanbanBoard, UserAccountDto, UserSessionState } from '@/lib/types';
 
 const initialState: UserSessionState = {
   userAccount: {
@@ -33,10 +33,13 @@ const userSessionSlice = createSlice({
     setHomeBoard: (state, action: PayloadAction<CompleteKanbanBoard>) => {
       state.homeBoard = action.payload;
     },
+    setAllPrimaryBoards: (state, action: PayloadAction<KanbanBoard[]>) => {
+      state.primaryBoardsMetadata = action.payload;
+    },
     setLogOut: () => initialState,
   },
 });
 
-export const { setUserSession, setHomeBoard, setLogOut} = userSessionSlice.actions;
+export const { setUserSession, setHomeBoard, setAllPrimaryBoards, setLogOut} = userSessionSlice.actions;
 export default userSessionSlice.reducer;
 export const selectUserSession = (state: { userSession: UserSessionState }) => state.userSession;

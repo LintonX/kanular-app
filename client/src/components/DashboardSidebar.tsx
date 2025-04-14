@@ -8,8 +8,8 @@ export default function DashboardSidebar({
   sidebarItems: SidebarItem[];
 }) {
   const dashboardContext = useDashboardContext();
-  const selectedItem = dashboardContext.selectedItem;
-  const setSelectedItem = dashboardContext.setSelectedItem;
+  const selectedView = dashboardContext.selectedView;
+  const setSelectedView = dashboardContext.setSelectedView;
 
   return (
     <div className="w-64 min-w-64 h-auto bg-secondary-black text-white px-7 pb-7">
@@ -20,9 +20,9 @@ export default function DashboardSidebar({
             {sidebarItems.map((item) => (
               <Link key={item.name} to={item.path}>
                 <li
-                  onClick={() => setSelectedItem(item)}
+                  onClick={() => setSelectedView(item)}
                   className={`px-4 py-2 w-full text-lg mb-2 rounded-lg ${
-                    item.name === selectedItem.name
+                    item.name === selectedView.name
                       ? "bg-primary-blue transform ease-in-out duration-400"
                       : ""
                   }`}

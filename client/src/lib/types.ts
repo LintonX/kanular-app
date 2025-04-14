@@ -4,8 +4,8 @@ export type SidebarItem = {
 };
 
 export type DashboardContextType = {
-  selectedItem: SidebarItem;
-  setSelectedItem: React.Dispatch<React.SetStateAction<SidebarItem>>;
+  selectedView: SidebarItem;
+  setSelectedView: React.Dispatch<React.SetStateAction<SidebarItem>>;
 };
 
 export type Column = {

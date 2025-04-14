@@ -8,19 +8,26 @@ import ProfileHeader from "@/components/ProfileHeader";
 import { useGetHomeBoardQuery } from "@/features/api/board-api";
 import { useDispatch } from "react-redux";
 import { setHomeBoard } from "@/features/slice/userSession/userSessionSlice";
+import AllPrimaryBoardsView from "@/components/AllBoardsView";
+import CalendarView from "@/components/CalendarView";
 
 export default function Dashboard() {
   const param = useParams();
   const [query] = useSearchParams();
   const dispatch = useDispatch();
-  const { data, isError, isFetching, isLoading } = useGetHomeBoardQuery({
+  const {
+    data: homeBoard,
+    isError,
+    isFetching,
+    isLoading,
+  } = useGetHomeBoardQuery({
     isPrimary: true,
     isHome: true,
   });
 
-  if (data) dispatch(setHomeBoard(data));
+  if (homeBoard) dispatch(setHomeBoard(homeBoard));
 
-  console.log("home board view", data);
+  console.log("home board view", homeBoard);
 
   // if (param?.boards)
   //   console.log("user requested to show all boards -> ", param.boards);
@@ -28,25 +35,27 @@ export default function Dashboard() {
   // const boardId = query.get("board");
   // if (boardId) console.log("user requested board ->", boardId);
 
-  const [selectedItem, setSelectedItem] = useState(sidebarItems[0]);
+  const [selectedView, setSelectedView] = useState(sidebarItems[0]);
 
   return (
     <div className="flex flex-col h-full w-screen bg-secondary-black">
       <ProfileHeader />
       <div className="flex h-full w-full">
-        <DashboardContext.Provider value={{ selectedItem, setSelectedItem }}>
+        <DashboardContext.Provider value={{ selectedView, setSelectedView }}>
           <DashboardSidebar sidebarItems={sidebarItems} />
         </DashboardContext.Provider>
 
         <section className="flex h-screen w-full bg-orange-100 rounded-tl-2xl p-3">
-        {isLoading || isFetching ? (
-          <div className="flex">Loading...</div>
-        ) : (
+          {isLoading || isFetching ? (
+            <div className="flex">Loading...</div>
+          ) : (
             <div className="flex">
               <div className="h-full w-5 bg-red-500 mr-3"></div>
-              <div>{data && <BoardView />}</div>
+              {(!param.view || param.view === "") && homeBoard && <BoardView />}
+              {param.view === "boards" && <AllPrimaryBoardsView />}
+              {param.view === "calendar" && <CalendarView />}
             </div>
-        )}
+          )}
         </section>
       </div>
     </div>

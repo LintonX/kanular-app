@@ -4,7 +4,6 @@ import com.kanular.server.dal.repositories.KanbanBoardRepository;
 import com.kanular.server.dal.repositories.KanbanCardRepository;
 import com.kanular.server.dal.repositories.KanbanColumnRepository;
 import com.kanular.server.models.CompleteKanbanBoard;
-import com.kanular.server.models.HomeAndPrimaryBoards;
 import com.kanular.server.models.Stage;
 import com.kanular.server.models.entities.KanbanBoard;
 import com.kanular.server.models.entities.KanbanCard;
@@ -12,7 +11,6 @@ import com.kanular.server.models.entities.KanbanColumn;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +19,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -81,6 +78,10 @@ public class KanbanBoardService {
                 .kanbanColumns(new KanbanColumn[]{kanbanColumnToDo, kanbanColumnInProgress, kanbanColumnInReview, kanbanColumnDone})
                 .kanbanCards(new KanbanCard[]{kanbanCardTodo, kanbanCardInProgress})
                 .build();
+    }
+
+    public KanbanBoard[] getAllPrimaryBoards(@NonNull UUID parentId) {
+        return kanbanBoardRepository.findAllByParentIdAndPrimaryBoardIsTrue(parentId).toArray(new KanbanBoard[0]);
     }
 
     public CompleteKanbanBoard createKanbanBoard(@NonNull final UUID parentId,

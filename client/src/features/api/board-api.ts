@@ -18,6 +18,12 @@ const boardApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getAllPrimaryBoards: builder.query<KanbanBoard[], void>({
+      query: () => ({
+        url: "/v1/getAllPrimaryBoards",
+        method: "GET",
+      })
+    }),
     updateCardBody: builder.mutation<KanbanCard, { cardId: string; bodyValue: string }>({
       query: ({ cardId, bodyValue }) => ({
         url: "/v1/updateCardBody",
@@ -35,4 +41,4 @@ const boardApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetHomeBoardQuery, useHydrateDashboardQuery, useUpdateCardBodyMutation, useCreateTaskMutation } = boardApi;
+export const { useGetHomeBoardQuery, useGetAllPrimaryBoardsQuery, useHydrateDashboardQuery, useUpdateCardBodyMutation, useCreateTaskMutation } = boardApi;

@@ -6,7 +6,7 @@ const CALENDAR = "Calendar";
 export const AUTH_DASHBOARD = "/auth/dashboard";
 
 export const sidebarItems: SidebarItem[] = [
-  { name: ACTIVE_BOARD, path: AUTH_DASHBOARD + "?board=1234" },
+  { name: ACTIVE_BOARD, path: AUTH_DASHBOARD },
   { name: BOARDS, path: AUTH_DASHBOARD + "/boards" },
   { name: CALENDAR, path: AUTH_DASHBOARD + "/calendar" },
 ];

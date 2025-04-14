@@ -44,6 +44,29 @@ public class KanbanBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(defaultKanbanBoard);
     }
 
+    @GetMapping("/api/v1/getAllPrimaryBoards")
+    public ResponseEntity<KanbanBoard[]> getAllPrimaryBoards(HttpServletRequest request) {
+
+        log.info("➡️ Entered: KanbanBoardController.getAllPrimaryBoards()");
+
+        final String jwt = jwtService.extractJwtFromCookies(request);
+        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
+
+        if (userAccountDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        final KanbanBoard[] primaryBoards = kanbanBoardService.getAllPrimaryBoards(
+                UUID.fromString(userAccountDto.getId())
+        );
+
+        if (primaryBoards.length > 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(primaryBoards);
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @PostMapping("/api/v1/createNewPrimaryKanbanBoard")
     public ResponseEntity<CompleteKanbanBoard> createNewPrimaryKanbanBoard(@RequestBody String boardTitle,
                                                                            HttpServletRequest request) {
