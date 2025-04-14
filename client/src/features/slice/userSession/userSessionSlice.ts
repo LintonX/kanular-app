@@ -1,9 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserAccountDto, UserSessionState } from '@/lib/types';
+import { HomeAndPrimaryBoards, UserAccountDto, UserSessionState } from '@/lib/types';
 
 const initialState: UserSessionState = {
-  userAccount: {id: "", email: ""},
-  isAuth: false
+  userAccount: {
+    id: '',
+    email: ''
+  },
+  isAuth: false,
+  homeAndPrimaryBoards: {
+    homeBoard: {
+      kanbanBoard: {
+        id: undefined,
+        parentId: undefined,
+        homeBoard: undefined,
+        primaryBoard: undefined,
+        title: undefined
+      },
+      kanbanColumns: [],
+      kanbanCards: []
+    },
+    primaryBoards: []
+  }
 };
 
 const userSessionSlice = createSlice({
@@ -15,13 +32,15 @@ const userSessionSlice = createSlice({
       state.userAccount = action.payload;
       state.isAuth = true;
     },
-    setLogOut: (state) => {
-      state.userAccount = {id: "", email: ""};
-      state.isAuth = false;
+    setLogOut: () => initialState,
+    setHydrateDashboard: (state, action: PayloadAction<HomeAndPrimaryBoards>) => {
+      const {homeBoard, primaryBoards} = action.payload;
+      state.homeAndPrimaryBoards.homeBoard = homeBoard;
+      state.homeAndPrimaryBoards.primaryBoards = primaryBoards;
     }
   },
 });
 
-export const { setUserSession, setLogOut} = userSessionSlice.actions;
+export const { setUserSession, setLogOut, setHydrateDashboard} = userSessionSlice.actions;
 export default userSessionSlice.reducer;
 export const selectUserSession = (state: { userSession: UserSessionState }) => state.userSession;

@@ -17,9 +17,9 @@ import java.util.UUID;
 public class UserAccount {
 
     @Id
+    @GeneratedValue
     @Column(updatable = false, nullable = false)
-    @Builder.Default
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String email;

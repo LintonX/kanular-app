@@ -11,12 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Service
@@ -35,8 +29,6 @@ public class AuthService {
 
         log.info("➡️ Entered: AuthService.signUp()");
 
-        // user doesnt exist
-        // user exists
         if (!(userSignUpCredential instanceof UserSignUpCredential)) {
             return null;
         }
@@ -54,10 +46,10 @@ public class AuthService {
 
         // store new user instance in database
         final UserAccount storedUserAccount = userRepository.save(newUserAccount);
-        final CompleteKanbanBoard homeKanbanBoard =
-                kanbanBoardService.initHomeKanbanBoard(storedUserAccount.getId());
+        final CompleteKanbanBoard defaultKanbanBoard =
+                kanbanBoardService.getDefaultBoard(storedUserAccount.getId());
 
-        if (homeKanbanBoard == null) {
+        if (defaultKanbanBoard == null) {
             userRepository.delete(storedUserAccount);
             return null;
         }
@@ -87,12 +79,12 @@ public class AuthService {
 
         if (isPasswordVerified) {
             try {
-//                final UserAccountDto userAccountDto = cryptoUtil.encrpytUserAccount(extractedUserAccount.convertToUserAccountDto());
+              final UserAccountDto userAccountDto = extractedUserAccount.convertToUserAccountDto();
                 return Pair.of(
-                        jwtService.createJwt(extractedUserAccount.convertToUserAccountDto()),
-                        cryptoUtil.encrpytUserAccount(extractedUserAccount.convertToUserAccountDto())
+                        jwtService.createJwt(userAccountDto),
+                        userAccountDto
                 );
-            } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | JsonProcessingException | IllegalBlockSizeException | IllegalAccessException | BadPaddingException | InvalidAlgorithmParameterException e) {
+            } catch (JsonProcessingException e) {
                 log.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }

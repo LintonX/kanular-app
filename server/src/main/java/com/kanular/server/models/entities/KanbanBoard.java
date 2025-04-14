@@ -29,4 +29,7 @@ public class KanbanBoard {
     @Column(nullable = false)
     private boolean homeBoard;
 
+    @Column(nullable = false)
+    private String title;
+
 }

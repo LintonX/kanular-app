@@ -1,4 +1,4 @@
-import { Column, SidebarItem } from "./types";
+import { SidebarItem } from "./types";
 
 const ACTIVE_BOARD = "Active Board";
 const BOARDS = "Boards";
@@ -11,9 +11,9 @@ export const sidebarItems: SidebarItem[] = [
   { name: CALENDAR, path: AUTH_DASHBOARD + "/calendar" },
 ];
 
-export const columns: Column[] = [
-  { id: "todo", title: "To Do", index: 0 },
-  { id: "inProgress", title: "In Progress", index: 1 },
-  { id: "review", title: "In Review", index: 2 },
-  { id: "Completed", title: "Completed", index: 3 },
-];
+export const stageLabels: Record<string, string> = {
+  ["TO_DO"]: "To Do",
+  ["IN_PROGRESS"]: "In Progress",
+  ["IN_REVIEW"]: "In Review",
+  ["DONE"]: "Done",
+};

@@ -15,14 +15,14 @@ import java.util.Arrays;
 public class CompleteKanbanBoard {
 
     private KanbanBoard kanbanBoard;
-    private KanbanColumn[] kanbanColumn;
-    private KanbanCard[] kanbanCard;
+    private KanbanColumn[] kanbanColumns;
+    private KanbanCard[] kanbanCards;
 
     @Override
     public String toString() {
         return "board: " + kanbanBoard.toString() +
-                ", columns: " + Arrays.toString(kanbanColumn) +
-                ", cards: " + Arrays.toString(kanbanCard);
+                ", columns: " + Arrays.toString(kanbanColumns) +
+                ", cards: " + Arrays.toString(kanbanCards);
     }
 
 }

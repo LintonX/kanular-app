@@ -31,25 +31,46 @@ export type UserAccountDto = {
 export type UserSessionState = {
   userAccount: UserAccountDto;
   isAuth: boolean;
+  homeAndPrimaryBoards: HomeAndPrimaryBoards;
 }
 
-// export type KanbanBoard = {
-//   id: string;
-//   parentId: string; 
-//   isPrimary: boolean;
-// }
+export type HomeAndPrimaryBoards = {
+  homeBoard: CompleteKanbanBoard;
+  primaryBoards: KanbanBoard[];
+}
 
-// export type KanbanColumn = {
-//   id: string;
-//   parentId: string;
-//   stage: string; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
-// }
+export type CompleteKanbanBoard = {
+  kanbanBoard: KanbanBoard;
+  kanbanColumns: KanbanColumn[];
+  kanbanCards: KanbanCard[]
+}
 
-// export type KanbanCard = {
-//   id: string;
-//   parentId: string;
-//   title: string;
-//   body: string;
-//   stage: string; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
-//   hasChildBoard: boolean;
-// }
+export type KanbanBoard = {
+  id?: string;
+  parentId?: string; 
+  homeBoard?: boolean;
+  primaryBoard?: boolean;
+  title?: string;
+}
+
+export type KanbanColumn = {
+  id?: string;
+  parentId?: string;
+  stage?: Stage; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
+}
+
+export type KanbanCard = {
+  id?: string;
+  parentId?: string;
+  title?: string;
+  body?: string;
+  stage?: Stage; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
+  hasChildBoard?: boolean;
+}
+
+export enum Stage {
+  TO_DO = "To Do",
+  IN_PROGRESS = "In Progress",
+  IN_REVIEW = "In Review",
+  DONE = "Done"
+}

@@ -4,6 +4,7 @@ import com.kanular.server.models.entities.KanbanColumn;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public interface KanbanColumnRepository extends CrudRepository<KanbanColumn, UUI
 
     @NonNull
     @Override
-    <S extends KanbanColumn> Iterable<S> saveAll(@NonNull Iterable<S> entities);
+    <S extends KanbanColumn> List<S> saveAll(@NonNull Iterable<S> entities);
 
     @NonNull
     Optional<KanbanColumn> findByParentId(@NonNull UUID uuid);

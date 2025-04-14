@@ -14,20 +14,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64.Encoder;
 import java.util.Base64.Decoder;
 
 import static com.kanular.server.utils.Constants.KANULAR_SESSION_KEY;
@@ -47,19 +38,9 @@ public class JwtService {
     private final JWTVerifier jwtVerifier;
     private final String issuer;
 
-    public String createJwt(@NonNull UserAccountDto userAccountDto) throws InvalidKeyException,
-            JsonProcessingException,
-            IllegalBlockSizeException,
-            BadPaddingException,
-            IllegalAccessException,
-            InvalidAlgorithmParameterException,
-            NoSuchPaddingException,
-            NoSuchAlgorithmException {
-
-        final UserAccountDto encryptedUserAccountDto = cryptoUtil.encrpytUserAccount(userAccountDto);
-        final String encryptedPayload = objectMapper.writeValueAsString(encryptedUserAccountDto);
+    public String createJwt(@NonNull UserAccountDto userAccountDto) throws JsonProcessingException {
         return JWT.create()
-                .withPayload(encryptedPayload)
+                .withPayload(objectMapper.writeValueAsString(userAccountDto))
                 .withExpiresAt(Instant.now().plus(DAYS_TO_ADD, ChronoUnit.DAYS))
                 .withIssuer(issuer)
                 .sign(algorithm);
@@ -101,6 +82,5 @@ public class JwtService {
 
         return null;
     }
-
 
 }

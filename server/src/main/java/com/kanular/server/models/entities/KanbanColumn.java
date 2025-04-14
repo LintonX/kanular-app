@@ -15,8 +15,9 @@ import java.util.UUID;
 public class KanbanColumn {
 
     @Id
+    @GeneratedValue
     @Column(updatable = false, nullable = false)
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     @Column(nullable = false)
     private UUID parentId;

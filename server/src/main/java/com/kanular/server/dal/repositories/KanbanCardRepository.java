@@ -2,8 +2,12 @@ package com.kanular.server.dal.repositories;
 
 import com.kanular.server.models.entities.KanbanCard;
 import lombok.NonNull;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,8 +37,12 @@ public interface KanbanCardRepository extends CrudRepository<KanbanCard, UUID> {
     @Override
     Iterable<KanbanCard> findAllById(@NonNull Iterable<UUID> uuid);
 
-    @Override
-    long count();
+    @NonNull
+    List<KanbanCard> findAllByParentId(UUID parentId);
+
+    @Modifying
+    @Query("update KanbanCard u set u.body = :body where u.id = :id")
+    int updateCardBody(@Param(value = "id") UUID id, @Param(value = "body") String body);
 
     @Override
     void deleteById(@NonNull UUID uuid);
@@ -48,6 +56,4 @@ public interface KanbanCardRepository extends CrudRepository<KanbanCard, UUID> {
     @Override
     void deleteAll(@NonNull Iterable<? extends KanbanCard> entities);
 
-    @Override
-    void deleteAll();
 }

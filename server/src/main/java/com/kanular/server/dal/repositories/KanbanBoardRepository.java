@@ -29,6 +29,9 @@ public interface KanbanBoardRepository extends CrudRepository<KanbanBoard, UUID>
     Optional<KanbanBoard> findByIdAndHomeBoardIsTrue(@NonNull UUID uuid);
 
     @NonNull
+    Optional<KanbanBoard> findByParentIdAndHomeBoardIsTrue(@NonNull UUID uuid);
+
+    @NonNull
     Optional<KanbanBoard> findByIdAndPrimaryBoardIsTrue(@NonNull UUID uuid);
 
     @NonNull
