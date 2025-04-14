@@ -50,21 +50,11 @@ public interface KanbanBoardRepository extends CrudRepository<KanbanBoard, UUID>
 
     List<KanbanBoard> findAllByParentIdAndPrimaryBoardIsTrue(@NonNull UUID parentId);
 
-    @Override
-    long count();
+    Optional<KanbanBoard> findByParentIdAndPrimaryBoardIsTrue(@NonNull UUID parentId);
+
+    Optional<KanbanBoard> findByParentIdAndPrimaryBoardIsFalse(@NonNull UUID parentId);
 
     @Override
     void deleteById(@NonNull UUID uuid);
 
-    @Override
-    void delete(@NonNull KanbanBoard entity);
-
-    @Override
-    void deleteAllById(@NonNull Iterable<? extends UUID> uuids);
-
-    @Override
-    void deleteAll(@NonNull Iterable<? extends KanbanBoard> entities);
-
-    @Override
-    void deleteAll();
 }

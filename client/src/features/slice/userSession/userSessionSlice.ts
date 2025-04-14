@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { HomeAndPrimaryBoards, UserAccountDto, UserSessionState } from '@/lib/types';
+import { CompleteKanbanBoard, UserAccountDto, UserSessionState } from '@/lib/types';
 
 const initialState: UserSessionState = {
   userAccount: {
@@ -7,20 +7,19 @@ const initialState: UserSessionState = {
     email: ''
   },
   isAuth: false,
-  homeAndPrimaryBoards: {
-    homeBoard: {
-      kanbanBoard: {
-        id: undefined,
-        parentId: undefined,
-        homeBoard: undefined,
-        primaryBoard: undefined,
-        title: undefined
-      },
-      kanbanColumns: [],
-      kanbanCards: []
+  homeBoard: {
+    kanbanBoard: {
+      id: undefined,
+      parentId: undefined,
+      homeBoard: undefined,
+      primaryBoard: undefined,
+      title: undefined
     },
-    primaryBoards: []
-  }
+    kanbanColumns: [],
+    kanbanCards: []
+  },
+  primaryBoardsMetadata: [],
+  viewedBoards: []
 };
 
 const userSessionSlice = createSlice({
@@ -28,19 +27,16 @@ const userSessionSlice = createSlice({
   initialState,
   reducers: {
     setUserSession: (state, action: PayloadAction<UserAccountDto>) => {
-      console.log('attempting to set state')
       state.userAccount = action.payload;
       state.isAuth = true;
     },
+    setHomeBoard: (state, action: PayloadAction<CompleteKanbanBoard>) => {
+      state.homeBoard = action.payload;
+    },
     setLogOut: () => initialState,
-    setHydrateDashboard: (state, action: PayloadAction<HomeAndPrimaryBoards>) => {
-      const {homeBoard, primaryBoards} = action.payload;
-      state.homeAndPrimaryBoards.homeBoard = homeBoard;
-      state.homeAndPrimaryBoards.primaryBoards = primaryBoards;
-    }
   },
 });
 
-export const { setUserSession, setLogOut, setHydrateDashboard} = userSessionSlice.actions;
+export const { setUserSession, setHomeBoard, setLogOut} = userSessionSlice.actions;
 export default userSessionSlice.reducer;
 export const selectUserSession = (state: { userSession: UserSessionState }) => state.userSession;

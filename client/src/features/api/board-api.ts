@@ -1,11 +1,18 @@
-import { HomeAndPrimaryBoards, KanbanCard } from "@/lib/types";
+import { CompleteKanbanBoard, KanbanBoard, KanbanCard } from "@/lib/types";
 import { baseApi } from "./base-api";
 
 // builder.operation<Return Shape, Input Shape> (......)
 
 const boardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    hydrateDashboard: builder.query<HomeAndPrimaryBoards, void>({
+    getHomeBoard: builder.query<CompleteKanbanBoard, {isPrimary: boolean, isHome: boolean}>({
+      query: ({isPrimary, isHome}) => ({
+        url: "/v1/getKanbanBoardByParentId",
+        method: "GET",
+        params: {isPrimary, isHome}
+      })
+    }),
+    hydrateDashboard: builder.query<KanbanBoard[], void>({
       query: () => ({
         url: "/v1/hydrateDashboard",
         method: "GET",
@@ -18,7 +25,14 @@ const boardApi = baseApi.injectEndpoints({
         body: { cardId: cardId, body: bodyValue },
       }),
     }),
+    createTask: builder.mutation<KanbanCard, KanbanCard>({
+      query: (kanbanCard) => ({
+        url: "/v1/createTask",
+        method: "POST",
+        body: kanbanCard
+      })
+    })
   }),
 });
 
-export const { useHydrateDashboardQuery, useUpdateCardBodyMutation } = boardApi;
+export const { useGetHomeBoardQuery, useHydrateDashboardQuery, useUpdateCardBodyMutation, useCreateTaskMutation } = boardApi;

@@ -31,12 +31,9 @@ export type UserAccountDto = {
 export type UserSessionState = {
   userAccount: UserAccountDto;
   isAuth: boolean;
-  homeAndPrimaryBoards: HomeAndPrimaryBoards;
-}
-
-export type HomeAndPrimaryBoards = {
   homeBoard: CompleteKanbanBoard;
-  primaryBoards: KanbanBoard[];
+  primaryBoardsMetadata: KanbanBoard[];
+  viewedBoards: CompleteKanbanBoard[];
 }
 
 export type CompleteKanbanBoard = {

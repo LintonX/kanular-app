@@ -133,11 +133,11 @@ public class KanbanBoardService {
                 .build();
     }
 
-    public CompleteKanbanBoard getKanbanBoard(@NonNull final UUID boardId,
-                                              final boolean isPrimary,
-                                              final boolean isHome) {
+    public CompleteKanbanBoard getKanbanBoardById(@NonNull final UUID boardId,
+                                                        final boolean isPrimary,
+                                                        final boolean isHome) {
         // home boards are always primary boards but primary boards are not always home boards
-        log.info("➡️ Entered: KanbanBoardService.getKanbanBoard()");
+        log.info("➡️ Entered: KanbanBoardService.getKanbanBoardById()");
 
         KanbanBoard kanbanBoard = null;
 
@@ -178,39 +178,79 @@ public class KanbanBoardService {
         return completeKanbanBoard;
     }
 
-    public HomeAndPrimaryBoards hydrateDashboard(@NonNull final UUID ownerId) {
-        log.info("➡️ Entered: KanbanBoardService.hydrateDashboard()");
+    public CompleteKanbanBoard getKanbanBoardByParentId(@NonNull final UUID ownerId,
+                                              final boolean isPrimary,
+                                              final boolean isHome) {
+        // home boards are always primary boards but primary boards are not always home boards
+        log.info("➡️ Entered: KanbanBoardService.getKanbanBoardByParentId()");
 
-        final KanbanBoard homeBoard = kanbanBoardRepository.findByParentIdAndHomeBoardIsTrue(ownerId)
-                .orElseThrow(() -> new RuntimeException("Error gathering home board."));
+        KanbanBoard kanbanBoard = null;
 
-        log.info("Home board found: {}", homeBoard.toString());
+        if (isHome && isPrimary) {
+            // get main home board
+            kanbanBoard = kanbanBoardRepository.findByParentIdAndHomeBoardIsTrue(ownerId)
+                    .orElseThrow(() -> new RuntimeException("Error gathering home board."));
+        } else if (!isHome && isPrimary) {
+            // get a primary board
+            kanbanBoard = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsTrue(ownerId)
+                    .orElseThrow(() -> new RuntimeException("Error gathering primary board."));
+        } else {
+            // get a child (nested) board
+            kanbanBoard = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsFalse(ownerId)
+                    .orElseThrow(() -> new RuntimeException("Error gathering child board."));
+        }
 
-        final CompleteKanbanBoard completeHomeBoard = getKanbanBoard(homeBoard.getId(), true, true);
+        List<KanbanColumn> columns = StreamSupport
+                .stream(kanbanColumnRepository.findAllByParentId(kanbanBoard.getId()).spliterator(), false)
+                .toList();
 
-        log.info("Complete home board: {}", completeHomeBoard);
+        List<UUID> columnIds = columns.stream()
+                .map(KanbanColumn::getId)
+                .toList();
 
-        final List<KanbanBoard> primaryBoards = kanbanBoardRepository.findAllByParentIdAndPrimaryBoardIsTrue(ownerId);
+        List<KanbanCard> cards = columnIds.stream()
+                .flatMap(columnId -> kanbanCardRepository.findAllByParentId(columnId).stream())
+                .toList();
 
-        log.info("Primary boards found: {}", primaryBoards.toString());
-
-        return HomeAndPrimaryBoards.builder()
-                .homeBoard(completeHomeBoard)
-                .primaryBoards(primaryBoards.toArray(new KanbanBoard[0]))
+        final CompleteKanbanBoard completeKanbanBoard = CompleteKanbanBoard.builder()
+                .kanbanBoard(kanbanBoard)
+                .kanbanColumns(columns.toArray(new KanbanColumn[0]))
+                .kanbanCards(cards.toArray(new KanbanCard[0]))
                 .build();
+
+        log.info("Completed kanban board = {}", completeKanbanBoard.toString());
+
+        return completeKanbanBoard;
     }
 
     @Transactional
     public KanbanCard updateCardBody(@NonNull UUID cardId, @NonNull String body) {
-        log.info("➡️ Entered: KanbanBoardService.saveBoard()");
+        log.info("➡️ Entered: KanbanBoardService.updateCardBody()");
 
         int result = kanbanCardRepository.updateCardBody(cardId, body);
+
+        log.info("Was card updated? {}", result == 1);
 
         if (result == 1) {
             return kanbanCardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Error gathering card."));
         }
 
         throw new RuntimeException("Did not update card");
+    }
+
+    public KanbanCard createTask(@NonNull KanbanCard kanbanCard) {
+        log.info("➡️ Entered: KanbanBoardService.createTask()");
+
+        return kanbanCardRepository.save(
+                        KanbanCard.builder()
+                        .parentId(kanbanCard.getParentId())
+                        .title(kanbanCard.getTitle())
+                        .body(kanbanCard.getBody())
+                        .stage(kanbanCard.getStage())
+                        .hasChildBoard(false)
+                        .timeCreated(Timestamp.from(Instant.now()))
+                        .build()
+        );
     }
 
 }

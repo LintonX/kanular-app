@@ -1,10 +1,7 @@
 package com.kanular.server.controller;
 
 import com.kanular.server.dal.repositories.KanbanCardRepository;
-import com.kanular.server.models.CompleteKanbanBoard;
-import com.kanular.server.models.HomeAndPrimaryBoards;
-import com.kanular.server.models.UpdateCardBodyDto;
-import com.kanular.server.models.UserAccountDto;
+import com.kanular.server.models.*;
 import com.kanular.server.models.entities.KanbanBoard;
 import com.kanular.server.models.entities.KanbanCard;
 import com.kanular.server.service.JwtService;
@@ -16,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -28,7 +26,6 @@ public class KanbanBoardController {
     private final KanbanCardRepository kanbanCardRepository;
     private KanbanBoardService kanbanBoardService;
     private JwtService jwtService;
-    private CryptoUtil cryptoUtil;
 
     @PostMapping("/api/v1/getDefaultBoard")
     public ResponseEntity<CompleteKanbanBoard> getDefaultBoard(HttpServletRequest request) {
@@ -86,12 +83,12 @@ public class KanbanBoardController {
 
     }
 
-    @GetMapping("/api/v1/hydrateDashboard")
-    public ResponseEntity<HomeAndPrimaryBoards> hydrateDashboard(HttpServletRequest request) {
-
-        // want the full home board and
-        // want primary board shallow details
-        log.info("➡️ Entered: KanbanBoardController.hydrateDashboard()");
+    @GetMapping("/api/v1/getKanbanBoardById")
+    public ResponseEntity<CompleteKanbanBoard> getKanbanBoardById(@RequestParam String boardId,
+                                                              @RequestParam boolean isPrimary,
+                                                              @RequestParam boolean isHome,
+                                                              HttpServletRequest request) {
+        log.info("➡️ Entered: KanbanBoardController.getKanbanBoardById()");
 
         final String jwt = jwtService.extractJwtFromCookies(request);
         final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
@@ -100,15 +97,14 @@ public class KanbanBoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        HomeAndPrimaryBoards hydratedDashboard =
-                kanbanBoardService.hydrateDashboard(UUID.fromString(userAccountDto.getId()));
+        final CompleteKanbanBoard completeKanbanBoard =
+                kanbanBoardService.getKanbanBoardById(UUID.fromString(boardId), isPrimary, isHome);
 
-        return ResponseEntity.status(HttpStatus.OK).body(hydratedDashboard);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(completeKanbanBoard);
     }
 
-    @GetMapping("/api/v1/getKanbanBoard")
-    public ResponseEntity<CompleteKanbanBoard> getKanbanBoard(@RequestParam String boardId,
-                                                              @RequestParam boolean isPrimary,
+    @GetMapping("/api/v1/getKanbanBoardByParentId")
+    public ResponseEntity<CompleteKanbanBoard> getKanbanBoardByParentId(@RequestParam boolean isPrimary,
                                                               @RequestParam boolean isHome,
                                                               HttpServletRequest request) {
         log.info("➡️ Entered: KanbanBoardController.getKanbanBoard()");
@@ -121,7 +117,7 @@ public class KanbanBoardController {
         }
 
         final CompleteKanbanBoard completeKanbanBoard =
-                kanbanBoardService.getKanbanBoard(UUID.fromString(boardId), isPrimary, isHome);
+                kanbanBoardService.getKanbanBoardByParentId(UUID.fromString(userAccountDto.getId()), isPrimary, isHome);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(completeKanbanBoard);
     }
@@ -149,4 +145,24 @@ public class KanbanBoardController {
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 
+    @PostMapping("/api/v1/createTask")
+    public ResponseEntity<KanbanCard> createTask(@RequestBody KanbanCard kanbanCard,
+                                                 HttpServletRequest request) {
+        log.info("➡️ Entered: KanbanBoardController.createTask()");
+
+        final String jwt = jwtService.extractJwtFromCookies(request);
+        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
+
+        if (userAccountDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        final KanbanCard createdCard = kanbanBoardService.createTask(kanbanCard);
+
+        if (createdCard != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdCard);
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+    }
 }

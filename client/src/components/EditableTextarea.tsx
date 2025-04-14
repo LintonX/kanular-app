@@ -21,7 +21,6 @@ export default function EditableTextarea({
       return;
     }
     try {
-      // try optimisitc update
       updateCardBody({
         cardId,
         bodyValue,
@@ -33,21 +32,21 @@ export default function EditableTextarea({
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-fit">
       <textarea
         name="text"
         defaultValue={body}
         onChange={(event) => {
           setBodyValue(event.target.value);
         }}
-        className="resize-none w-full h-fit m-0"
+        className="resize-none w-full field-sizing-content m-0"
         onClick={() => setIsFocused(true)}
         disabled={isLoading}
       />
       <div className="flex justify-start mt-1 gap-2">
         {isFocused && (
-          <>
-            <Button className="flex h-7 text-xs font-normal w-1/5" onClick={() => setIsFocused(false)}>X</Button>
+          <div className="flex mt-1 w-full gap-2">
+            <Button className="flex h-7 text-xs font-normal w-2/7" variant={"outline"} onClick={() => setIsFocused(false)}>Cancel</Button>
             <Button
               className="flex flex-auto h-7 text-xs font-normal"
               variant="default"
@@ -57,7 +56,7 @@ export default function EditableTextarea({
               {isLoading && <LoaderCircle className="animate-spin" />}
               {isSuccess ? "Saved" : "Save"}
             </Button>
-          </>
+          </div>
         )}
       </div>
     </div>
