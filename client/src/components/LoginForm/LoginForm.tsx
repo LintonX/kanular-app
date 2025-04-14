@@ -10,8 +10,8 @@ import { setUserSession } from "@/features/slice/userSession/userSessionSlice";
 
 export default function LogIn() {
   const [login, { isLoading }] = useLoginMutation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(import.meta.env.DEV ? import.meta.env.VITE_TEST_EMAIL : "");
+  const [password, setPassword] = useState(import.meta.env.DEV ? import.meta.env.VITE_TEST_PASS : "");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -51,6 +51,7 @@ export default function LogIn() {
             className="w-full border-2 border-violetBrand rounded-md mb-6 h-9 px-3 pl-9 focus:outline-none focus:border-black"
             type="email"
             placeholder="kanular@example.com"
+            value={import.meta.env.VITE_TEST_EMAIL}
             onChange={(event) => setEmail(event.target.value)}
             required
           />
@@ -63,6 +64,7 @@ export default function LogIn() {
             className="w-full border-2 border-violetBrand rounded-md mb-2 h-9 px-3 focus:outline-none focus:border-black"
             type="password"
             placeholder="password"
+            value={import.meta.env.VITE_TEST_PASS}
             onChange={(event) => setPassword(event.target.value)}
             required
           />
