@@ -54,6 +54,16 @@ const boardApi = baseApi.injectEndpoints({
         }
       }),
     }),
+    deleteBoard: builder.mutation<void, string>({
+      query: ( boardId ) => ({
+        url: "/v1/deleteBoard",
+        method: "POST",
+        body: boardId,
+        headers: {
+          'Content-Type': 'text/plain',
+        }
+      })
+    })
   }),
 });
 
@@ -64,4 +74,5 @@ export const {
   useUpdateCardBodyMutation,
   useCreateTaskMutation,
   useCreateNewPrimaryBoardMutation,
+  useDeleteBoardMutation, 
 } = boardApi;

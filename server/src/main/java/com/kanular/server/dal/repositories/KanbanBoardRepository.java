@@ -57,4 +57,6 @@ public interface KanbanBoardRepository extends CrudRepository<KanbanBoard, UUID>
     @Override
     void deleteById(@NonNull UUID uuid);
 
+    void deleteByParentId(@NonNull UUID uuid);
+
 }

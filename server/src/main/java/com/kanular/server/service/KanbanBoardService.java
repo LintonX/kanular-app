@@ -235,14 +235,23 @@ public class KanbanBoardService {
         );
     }
 
-//    @Transactional
-//    public void deleteBoard(@NonNull UUID boardId) {
-//        log.info("➡️ Entered: KanbanBoardService.deleteBoard()");
-//
-//        final KanbanBoard boardToBeDeleted = kanbanBoardRepository.findById(boardId)
-//                .orElseThrow(() -> new RuntimeException("Could not delete board: " + boardId + " as it was not found"));
-//
-//        ka
-//
-//    }
+    @Transactional
+    public void deleteBoard(@NonNull UUID boardId) {
+        log.info("➡️ Entered: KanbanBoardService.deleteBoard()");
+        final KanbanBoard boardToBeDeleted = kanbanBoardRepository.findById(boardId)
+                .orElseThrow(() -> new RuntimeException("Could not delete board: " + boardId + " as it was not found"));
+        final KanbanColumn[] columnsToBeDeleted = kanbanColumnRepository.findAllByParentId(boardToBeDeleted.getId()).toArray(new KanbanColumn[0]);
+        for (final KanbanColumn column: columnsToBeDeleted) {
+            final KanbanCard[] cardsToBeDeleted = kanbanCardRepository.findAllByParentId(column.getId()).toArray(new KanbanCard[0]);
+            for (final KanbanCard card: cardsToBeDeleted) {
+                if (card.isHasChildBoard()) {
+                    final KanbanBoard childBoardToBeDeleted = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsFalse(card.getId()).orElseThrow(() -> new RuntimeException("Did not find a child board of card: " + card.getId()));
+                    this.deleteBoard(childBoardToBeDeleted.getId());
+                }
+                kanbanCardRepository.deleteById(card.getId());
+            }
+            kanbanColumnRepository.deleteById(column.getId());
+        }
+        kanbanBoardRepository.deleteById(boardToBeDeleted.getId());
+    }
 }

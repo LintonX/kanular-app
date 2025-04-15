@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useCreateTaskMutation } from "@/features/api/board-api";
 import { Stage } from "@/lib/types";
 import { LoaderCircle } from "lucide-react";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 export default function AddTaskModal({
   parentId,
@@ -94,6 +95,7 @@ export default function AddTaskModal({
             )}
           </Button>
         </div>
+        <DialogDescription />
       </DialogContent>
     </Dialog>
   );

@@ -190,18 +190,20 @@ public class KanbanBoardController {
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 
-//    @PostMapping("/api/v1/deleteBoard")
-//    public ResponseEntity<KanbanCard> deleteBoard(@RequestBody String boardId,
-//                                                 HttpServletRequest request) {
-//
-//        log.info("➡️ Entered: KanbanBoardController.deleteBoard()");
-//
-//        final String jwt = jwtService.extractJwtFromCookies(request);
-//        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
-//
-//        if (userAccountDto == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//        kanbanBoardService.deleteBoard(UUID.fromString(boardId));
-//    }
+    @PostMapping("/api/v1/deleteBoard")
+    public ResponseEntity<Void> deleteBoard(@RequestBody String boardId,
+                                                 HttpServletRequest request) {
+
+        log.info("➡️ Entered: KanbanBoardController.deleteBoard()");
+
+        final String jwt = jwtService.extractJwtFromCookies(request);
+        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
+
+        if (userAccountDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        kanbanBoardService.deleteBoard(UUID.fromString(boardId));
+
+        return ResponseEntity.ok().build();
+    }
 }

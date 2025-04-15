@@ -22,7 +22,7 @@ public interface KanbanColumnRepository extends CrudRepository<KanbanColumn, UUI
     Optional<KanbanColumn> findByParentId(@NonNull UUID uuid);
 
     @NonNull
-    Iterable<KanbanColumn> findAllByParentId(@NonNull UUID uuid);
+    List<KanbanColumn> findAllByParentId(@NonNull UUID uuid);
 
     @NonNull
     @Override
