@@ -1,14 +1,21 @@
 import { KanbanBoard } from "@/lib/types";
-import { Star, StarOff } from "lucide-react";
-import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import { Heart } from "lucide-react";
+import ConfirmDeleteModal from "./ConfirmBoardDeleteModal";
+import { useSetNewFavoriteMutation } from "@/features/api/board-api";
 
 export default function BoardCard({
   boardMetadata,
 }: {
   boardMetadata: KanbanBoard;
 }) {
-  const starSize = 34;
-  console.log(boardMetadata);
+
+    const [setNewFavorite] = useSetNewFavoriteMutation();
+  const heartSize = 34;
+
+  const handleSetAsFavorite = () => {
+    if (boardMetadata.homeBoard) return
+    setNewFavorite(boardMetadata.id!);
+  }
 
   return (
     <div className="flex flex-col w-72 h-48 bg-red-400 rounded-lg px-5 py-4">
@@ -16,14 +23,14 @@ export default function BoardCard({
         <h1 className="font-medium text-xl">{boardMetadata.title}</h1>
         <div className="flex">
           {boardMetadata.homeBoard ? (
-            <Star
+            <Heart
               className="cursor-pointer"
-              fill="white"
+              fill="red"
               stroke="none"
-              size={starSize}
+              size={heartSize}
             />
           ) : (
-            <StarOff size={starSize} />
+            <Heart onClick={handleSetAsFavorite} className="cursor-pointer" fill="none" stroke="black" strokeWidth={2} size={heartSize - 3} />
           )}
         </div>
       </div>

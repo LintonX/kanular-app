@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { KanbanBoard } from "@/lib/types";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
-export default function ConfirmDeleteModal({boardMetadata}: {boardMetadata: KanbanBoard}) {
+export default function ConfirmBoardDeleteModal({boardMetadata}: {boardMetadata: KanbanBoard}) {
   const [deleteBoard, { isError, isLoading, isSuccess }] = useDeleteBoardMutation();
   const [repeatBoardTitle, setRepeatBoardTitle] = useState("");
   const [isMatching, setIsMatching] = useState(true);

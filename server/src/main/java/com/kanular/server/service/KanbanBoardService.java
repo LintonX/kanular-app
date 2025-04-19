@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
@@ -253,5 +254,31 @@ public class KanbanBoardService {
             kanbanColumnRepository.deleteById(column.getId());
         }
         kanbanBoardRepository.deleteById(boardToBeDeleted.getId());
+    }
+
+    @Transactional
+    public boolean setFavoriteBoard(@NonNull UUID parentId, @NonNull UUID boardId) {
+        log.info("➡️ Entered: KanbanBoardService.setFavoriteBoard()");
+
+        Optional<KanbanBoard> currentFavorite = kanbanBoardRepository.findByParentIdAndHomeBoardIsTrue(parentId);
+
+        if (currentFavorite.isEmpty()) {
+            return kanbanBoardRepository.updateBoardHome(boardId, true) == 1;
+        }
+
+        final int unfavoriteResult =
+                kanbanBoardRepository.updateBoardHome(currentFavorite.get().getId(), false);
+        final int favoriteResult =
+                kanbanBoardRepository.updateBoardHome(boardId, true);
+
+        return unfavoriteResult == 1 && favoriteResult == 1;
+    }
+
+    @Transactional
+    public UUID deleteTask(@NonNull UUID taskId) {
+        log.info("➡️ Entered: KanbanBoardService.deleteTask()");
+        final int result = kanbanCardRepository.deleteByIdAndReturnCount(taskId);
+
+        return result == 1 ? taskId : null;
     }
 }

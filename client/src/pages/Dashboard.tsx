@@ -17,7 +17,6 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const {
     data: homeBoard,
-    isError,
     isFetching,
     isLoading,
   } = useGetHomeBoardQuery({

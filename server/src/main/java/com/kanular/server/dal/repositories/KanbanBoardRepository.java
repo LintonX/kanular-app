@@ -1,6 +1,8 @@
 package com.kanular.server.dal.repositories;
 
 import lombok.NonNull;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.kanular.server.models.entities.KanbanBoard;
@@ -58,5 +60,9 @@ public interface KanbanBoardRepository extends CrudRepository<KanbanBoard, UUID>
     void deleteById(@NonNull UUID uuid);
 
     void deleteByParentId(@NonNull UUID uuid);
+
+    @Modifying
+    @Query("update KanbanBoard k set k.homeBoard = :isHome WHERE k.id = :uuid")
+    int updateBoardHome(@NonNull UUID uuid, boolean isHome);
 
 }

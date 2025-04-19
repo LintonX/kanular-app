@@ -11,29 +11,38 @@ import { useCreateTaskMutation } from "@/features/api/board-api";
 import { Stage } from "@/lib/types";
 import { LoaderCircle } from "lucide-react";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { useDispatch } from "react-redux";
+import { lazyCreateTask } from "@/features/slice/userSession/userSessionSlice";
 
-export default function AddTaskModal({
+export default function CreateTaskModal({
   parentId,
   stage,
 }: {
   parentId: string;
   stage: Stage;
 }) {
+  const dispatch = useDispatch();
   const [createTask, { isError, isLoading, isSuccess }] =
     useCreateTaskMutation();
   const [taskTitle, setTaskTitle] = useState("");
   const [taskBody, setTaskBody] = useState("");
   const [keepModalOpen, setKeepModalOpen] = useState(false);
 
-  const handleCreateTask = () => {
+  const handleCreateTask = async () => {
     if (!taskTitle.trim() || !taskBody.trim()) return;
-    createTask({
-      parentId: parentId,
-      title: taskTitle.trim(),
-      body: taskBody.trim(),
-      hasChildBoard: false,
-      stage: stage,
-    });
+    try {
+      const { data: createdTask } = await createTask({
+        parentId: parentId,
+        title: taskTitle.trim(),
+        body: taskBody.trim(),
+        hasChildBoard: false,
+        stage: stage, 
+      });
+      console.log("create task payload", createdTask);
+      dispatch(lazyCreateTask(createdTask!));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

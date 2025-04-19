@@ -41,11 +41,12 @@ public interface KanbanCardRepository extends CrudRepository<KanbanCard, UUID> {
     List<KanbanCard> findAllByParentId(UUID parentId);
 
     @Modifying
-    @Query("update KanbanCard u set u.body = :body where u.id = :id")
+    @Query("UPDATE KanbanCard u SET u.body = :body WHERE u.id = :id")
     int updateCardBody(@Param(value = "id") UUID id, @Param(value = "body") String body);
 
-    @Override
-    void deleteById(@NonNull UUID uuid);
+    @Modifying
+    @Query("DELETE FROM KanbanCard k WHERE k.id = :id")
+    int deleteByIdAndReturnCount(@Param("id") UUID id);
 
     @Override
     void delete(@NonNull KanbanCard entity);

@@ -31,7 +31,7 @@ export type UserAccountDto = {
 export type UserSessionState = {
   userAccount: UserAccountDto;
   isAuth: boolean;
-  homeBoard: CompleteKanbanBoard;
+  activeBoard: CompleteKanbanBoard;
   primaryBoardsMetadata: KanbanBoard[];
   viewedBoards: CompleteKanbanBoard[];
 }
@@ -63,6 +63,7 @@ export type KanbanCard = {
   body?: string;
   stage?: Stage; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
   hasChildBoard?: boolean;
+  timeCreated?: string;
 }
 
 export enum Stage {

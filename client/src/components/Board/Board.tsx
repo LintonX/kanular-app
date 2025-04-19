@@ -1,4 +1,4 @@
-import ColumnCard from "./Column";
+import Column from "./Column";
 import { CompleteKanbanBoard, KanbanCard, Stage } from "@/lib/types";
 
 export default function Board({completeBoard}: {completeBoard: CompleteKanbanBoard}) {
@@ -13,18 +13,18 @@ export default function Board({completeBoard}: {completeBoard: CompleteKanbanBoa
 
   const columnStagesToCardsMap = new Map<Stage, KanbanCard[]>([]);
   kanbanCards.forEach((card) => {
-    const existingCards = columnStagesToCardsMap.get(card.stage) || [];
-    columnStagesToCardsMap.set(card.stage, [...existingCards, card]);
+    const existingCards = columnStagesToCardsMap.get(card.stage!) || [];
+    columnStagesToCardsMap.set(card.stage!, [...existingCards, card]);
   });
 
   return (
-    <div>
+    <div className="h-full">
       <h1 className="font-bold text-3xl">{kanbanBoard.title}</h1>
-      <div className="grid grid-cols-4 gap-2 h-full w-full">
+      <div className="grid grid-cols-4 gap-2 h-[670px] w-full">
         {kanbanColumns.map(
           (currColumn) =>
             currColumn.stage && (
-              <ColumnCard
+              <Column
                 key={currColumn.id}
                 column={currColumn}
                 cards={columnStagesToCardsMap.get(currColumn.stage) || []}

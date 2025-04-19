@@ -1,7 +1,7 @@
 import { KanbanCard } from "@/lib/types";
 import { Button } from "../ui/button";
-import { Trash2Icon } from "lucide-react";
 import EditableTextarea from "../EditableTextarea";
+import ConfirmDeleteTaskModal from "../ConfirmDeleteTaskModal";
 
 export default function TaskCard({ card }: { card: KanbanCard }) {
   return (
@@ -13,7 +13,7 @@ export default function TaskCard({ card }: { card: KanbanCard }) {
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <Trash2Icon className="ml-0.5" size={18}/>
+        <ConfirmDeleteTaskModal taskData={card}/>
         <Button className="h-7 text-xs font-normal mr-0.5" variant={"outline"}>
           Kanulize
         </Button>

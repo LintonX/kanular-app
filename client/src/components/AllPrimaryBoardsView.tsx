@@ -11,9 +11,6 @@ export default function AllPrimaryBoardsView() {
   const dispatch = useDispatch();
   const {
     data: primaryBoards,
-    isError,
-    isLoading,
-    isSuccess,
   } = useGetAllPrimaryBoardsQuery();
 
   useEffect(() => {

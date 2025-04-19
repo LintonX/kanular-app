@@ -9,6 +9,7 @@ import com.kanular.server.service.KanbanBoardService;
 import com.kanular.server.utils.CryptoUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -190,6 +191,26 @@ public class KanbanBoardController {
         return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
     }
 
+    @DeleteMapping("/api/v1/deleteTask")
+    public ResponseEntity<String> deleteTask(@RequestBody String taskId, HttpServletRequest request) {
+        log.info("➡️ Entered: KanbanBoardController.deleteTask()");
+
+        final String jwt = jwtService.extractJwtFromCookies(request);
+        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
+
+        if (userAccountDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        final UUID deletedTaskId = kanbanBoardService.deleteTask(UUID.fromString(taskId));
+
+        if (deletedTaskId == null) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+        }
+
+        return ResponseEntity.ok().body("\"" + deletedTaskId + "\"");
+    }
+
     @PostMapping("/api/v1/deleteBoard")
     public ResponseEntity<Void> deleteBoard(@RequestBody String boardId,
                                                  HttpServletRequest request) {
@@ -203,6 +224,24 @@ public class KanbanBoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         kanbanBoardService.deleteBoard(UUID.fromString(boardId));
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/v1/setFavoriteBoard")
+    public ResponseEntity<Void> setFavoriteBoard(@RequestBody @NonNull String boardId, HttpServletRequest request) {
+        log.info("➡️ Entered: KanbanBoardController.setFavoriteBoard()");
+
+        final String jwt = jwtService.extractJwtFromCookies(request);
+        final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
+
+        if (userAccountDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+        }
+
+        boolean boardSetAsFavorite = kanbanBoardService.setFavoriteBoard(
+                UUID.fromString(userAccountDto.getId()), UUID.fromString(boardId)
+        );
 
         return ResponseEntity.ok().build();
     }
