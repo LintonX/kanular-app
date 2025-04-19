@@ -47,7 +47,7 @@ export default function Dashboard() {
           <DashboardSidebar sidebarItems={sidebarItems} />
         </DashboardContext.Provider>
 
-        <section className="flex h-screen w-full bg-orange-100 rounded-tl-2xl p-3">
+        <section className="flex h-screen w-full bg-primary-white rounded-tl-2xl p-3">
           {isLoading || isFetching ? (
             <div className="flex">Loading...</div>
           ) : (
