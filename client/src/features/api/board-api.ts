@@ -5,11 +5,11 @@ import { baseApi } from "./base-api";
 
 const boardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getHomeBoard: builder.query<CompleteKanbanBoard, { isPrimary: boolean; isHome: boolean }>({
-      query: ({ isPrimary, isHome }) => ({
+    getHomeBoard: builder.query<CompleteKanbanBoard, { primaryBoard: boolean; homeBoard: boolean }>({
+      query: ({ primaryBoard, homeBoard }) => ({
         url: "/v1/getKanbanBoardByParentId",
         method: "GET",
-        params: { isPrimary, isHome },
+        params: { primaryBoard, homeBoard },
       }),
       providesTags: (result) =>
         result
@@ -20,6 +20,13 @@ const boardApi = baseApi.injectEndpoints({
       query: () => ({
         url: "/v1/hydrateDashboard",
         method: "GET",
+      }),
+    }),
+    getCompleteBoardById: builder.query<CompleteKanbanBoard, KanbanBoard>({
+      query: ( {id: boardId, primaryBoard, homeBoard} ) => ({
+        url: "/v1/getKanbanBoardById",
+        method: "GET",
+        params: { boardId, primaryBoard, homeBoard }
       }),
     }),
     getAllPrimaryBoards: builder.query<KanbanBoard[], void>({
@@ -99,6 +106,7 @@ const boardApi = baseApi.injectEndpoints({
 export const {
   useGetHomeBoardQuery,
   useGetAllPrimaryBoardsQuery,
+  useLazyGetCompleteBoardByIdQuery,
   useHydrateDashboardQuery,
   useUpdateCardBodyMutation,
   useCreateTaskMutation,

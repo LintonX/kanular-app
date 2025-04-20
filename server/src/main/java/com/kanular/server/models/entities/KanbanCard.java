@@ -36,6 +36,7 @@ public class KanbanCard {
     @Column(nullable = false)
     private boolean hasChildBoard;
 
+    @Builder.Default
     @Column(nullable = false)
     private Timestamp timeCreated = Timestamp.from(Instant.now());
 

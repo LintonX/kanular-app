@@ -6,16 +6,13 @@ import com.kanular.server.models.entities.KanbanBoard;
 import com.kanular.server.models.entities.KanbanCard;
 import com.kanular.server.service.JwtService;
 import com.kanular.server.service.KanbanBoardService;
-import com.kanular.server.utils.CryptoUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -110,8 +107,8 @@ public class KanbanBoardController {
 
     @GetMapping("/api/v1/getKanbanBoardById")
     public ResponseEntity<CompleteKanbanBoard> getKanbanBoardById(@RequestParam String boardId,
-                                                                  @RequestParam boolean isPrimary,
-                                                                  @RequestParam boolean isHome,
+                                                                  @RequestParam boolean primaryBoard,
+                                                                  @RequestParam boolean homeBoard,
                                                                   HttpServletRequest request) {
         log.info("➡️ Entered: KanbanBoardController.getKanbanBoardById()");
 
@@ -123,14 +120,14 @@ public class KanbanBoardController {
         }
 
         final CompleteKanbanBoard completeKanbanBoard =
-                kanbanBoardService.getKanbanBoardById(UUID.fromString(boardId), isPrimary, isHome);
+                kanbanBoardService.getKanbanBoardById(UUID.fromString(boardId), primaryBoard, homeBoard);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(completeKanbanBoard);
     }
 
     @GetMapping("/api/v1/getKanbanBoardByParentId")
-    public ResponseEntity<CompleteKanbanBoard> getKanbanBoardByParentId(@RequestParam boolean isPrimary,
-                                                                        @RequestParam boolean isHome,
+    public ResponseEntity<CompleteKanbanBoard> getKanbanBoardByParentId(@RequestParam boolean primaryBoard,
+                                                                        @RequestParam boolean homeBoard,
                                                                         HttpServletRequest request) {
         log.info("➡️ Entered: KanbanBoardController.getKanbanBoard()");
 
@@ -142,7 +139,7 @@ public class KanbanBoardController {
         }
 
         final CompleteKanbanBoard completeKanbanBoard =
-                kanbanBoardService.getKanbanBoardByParentId(UUID.fromString(userAccountDto.getId()), isPrimary, isHome);
+                kanbanBoardService.getKanbanBoardByParentId(UUID.fromString(userAccountDto.getId()), primaryBoard, homeBoard);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(completeKanbanBoard);
     }

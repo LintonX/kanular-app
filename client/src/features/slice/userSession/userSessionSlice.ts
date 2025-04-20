@@ -48,6 +48,9 @@ const userSessionSlice = createSlice({
       });
       state.primaryBoardsMetadata.push(...newBoards);
     },
+    setViewedBoards: (state, action: PayloadAction<CompleteKanbanBoard>) => {
+      state.viewedBoards = [action.payload, ...state.viewedBoards];
+    },
     lazyCreateTask: (state, action: PayloadAction<KanbanCard>) => {
       console.log("in create task slice", action.payload)
       state.activeBoard.kanbanCards = [...state.activeBoard.kanbanCards, action.payload]
@@ -60,7 +63,7 @@ const userSessionSlice = createSlice({
   },
 });
 
-export const { setUserSession, setHomeBoard, setAllPrimaryBoards, setLogOut, lazyCreateTask, lazyDeleteTask } =
+export const { setUserSession, setHomeBoard, setAllPrimaryBoards, setViewedBoards, setLogOut, lazyCreateTask, lazyDeleteTask } =
   userSessionSlice.actions;
 export default userSessionSlice.reducer;
 export const selectUserSession = (state: { userSession: UserSessionState }) =>

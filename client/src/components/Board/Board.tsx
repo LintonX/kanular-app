@@ -3,10 +3,8 @@ import { CompleteKanbanBoard, KanbanCard, Stage } from "@/lib/types";
 
 export default function Board({completeBoard}: {completeBoard: CompleteKanbanBoard}) {
 
-  if (completeBoard) {
-    console.log("HEYSYFSIJFSJE")
-  } else {
-    return <div>asfas</div>
+  if (!completeBoard) {
+    return <div>Error: No board found</div>
   }
 
   const { kanbanBoard, kanbanColumns, kanbanCards } = completeBoard;
@@ -19,7 +17,7 @@ export default function Board({completeBoard}: {completeBoard: CompleteKanbanBoa
 
   return (
     <div className="h-full">
-      <h1 className="font-bold text-3xl">{kanbanBoard.title}</h1>
+      <h1 className="font-bold text-2xl mb-2">{kanbanBoard.title}</h1>
       <div className="grid grid-cols-4 gap-2 h-[670px] w-full">
         {kanbanColumns.map(
           (currColumn, index) =>
