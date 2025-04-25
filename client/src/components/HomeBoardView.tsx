@@ -23,5 +23,5 @@ export default function HomeBoardView() {
     }
   }, [homeBoard, dispatch]);
 
-  return <>{isFetching || isLoading ? <div>Loading...</div> : <BoardView />}</>;
+  return <>{isFetching || isLoading ? <div>Loading...</div> : <BoardView board={homeBoard} />}</>;
 }

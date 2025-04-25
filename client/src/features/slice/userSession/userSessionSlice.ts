@@ -49,7 +49,10 @@ const userSessionSlice = createSlice({
       state.primaryBoardsMetadata.push(...newBoards);
     },
     setViewedBoards: (state, action: PayloadAction<CompleteKanbanBoard>) => {
+      console.log("in setViewedBoards", state.viewedBoards, action);
+      if (state.viewedBoards.some((board) => board.kanbanBoard.id === action.payload.kanbanBoard.id)) return;
       state.viewedBoards = [action.payload, ...state.viewedBoards];
+      console.log('after', state.viewedBoards);
     },
     lazyCreateTask: (state, action: PayloadAction<KanbanCard>) => {
       console.log("in create task slice", action.payload)

@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { Slide, toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
-import { stageLabels } from "./constants";
+import { SIDEBAR_ITEMS, STAGE_LABELS } from "./constants";
+import { SidebarItem } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -25,5 +26,12 @@ export const toastNotifyError = (errorMessage: string) => {
 };
 
 export const getStage = (stage: string) => {
-  return stageLabels[stage];
+  return STAGE_LABELS[stage];
 }
+
+export const getSidebarItems = (additionalItems: SidebarItem[] = []) => {
+  return [
+    ...SIDEBAR_ITEMS,
+    ...additionalItems,
+  ];
+};

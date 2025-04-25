@@ -4,6 +4,8 @@ export type SidebarItem = {
 };
 
 export type DashboardContextType = {
+  sidebarItems: SidebarItem[];
+  setSidebarItems?: React.Dispatch<React.SetStateAction<SidebarItem[]>>;
   selectedView: SidebarItem;
   setSelectedView: React.Dispatch<React.SetStateAction<SidebarItem>>;
 };
@@ -34,6 +36,11 @@ export type UserSessionState = {
   activeBoard: CompleteKanbanBoard;
   primaryBoardsMetadata: KanbanBoard[];
   viewedBoards: CompleteKanbanBoard[];
+}
+
+export type SidebarState = {
+  sidebarItems: SidebarItem[];
+  selectedView: SidebarItem;
 }
 
 export type CompleteKanbanBoard = {
