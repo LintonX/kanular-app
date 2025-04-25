@@ -18,11 +18,15 @@ import {
 import { AUTH_DASHBOARD, SIDEBAR_ITEMS } from "@/lib/constants";
 import { store } from "@/state/store";
 import { useNavigate } from "react-router-dom";
+import LoadingBoard from "./LoadingBoard";
+import { useEffect } from "react";
 
 export default function BoardCard({
   boardMetadata,
+  setIsBoardLoading,
 }: {
   boardMetadata: KanbanBoard;
+  setIsBoardLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const heartSize = 34;
   const dispatch = useDispatch();
@@ -30,7 +34,14 @@ export default function BoardCard({
   const { activeBoard, viewedBoards } = useSelector(selectUserSession);
   const { sidebarItems } = useSelector(selectUserSidebar);
   const [setNewFavorite] = useSetNewFavoriteMutation();
-  const [getCompleteBoard, { isLoading }] = useLazyGetCompleteBoardByIdQuery();
+  const [getCompleteBoard, { isLoading, isFetching }] =
+    useLazyGetCompleteBoardByIdQuery();
+
+  useEffect(() => {
+    if (isLoading || isFetching) {
+      setIsBoardLoading(true);
+    }
+  }, [isLoading, isFetching, setIsBoardLoading]);
 
   const handleSetAsFavorite = () => {
     if (boardMetadata.homeBoard) return;
@@ -44,7 +55,7 @@ export default function BoardCard({
       navigate(AUTH_DASHBOARD);
       return;
     }
-    if (isLoading) return;
+    if (isLoading || isFetching) return;
     try {
       const completeKanbanBoard = await getCompleteBoard(
         boardMetadata

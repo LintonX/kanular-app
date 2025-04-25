@@ -3,6 +3,7 @@ import BoardView from "./BoardView";
 import { useGetHomeBoardQuery } from "@/features/api/board-api";
 import { setHomeBoard } from "@/features/slice/userSession/userSessionSlice";
 import { useEffect } from "react";
+import LoadingBoard from "./LoadingBoard";
 
 export default function HomeBoardView() {
   console.log("in homeboardview");
@@ -23,5 +24,5 @@ export default function HomeBoardView() {
     }
   }, [homeBoard, dispatch]);
 
-  return <>{isFetching || isLoading ? <div>Loading...</div> : <BoardView board={homeBoard} />}</>;
+  return <>{isLoading || isFetching ? <LoadingBoard /> : <BoardView board={homeBoard} />}</>;
 }
