@@ -1,6 +1,7 @@
 import Board from "./Board/Board";
 import { useSelector } from "react-redux";
 import { selectUserSession } from "@/features/slice/userSession/userSessionSlice";
+import HomeBoardView from "./HomeBoardView";
 import { CompleteKanbanBoard } from "@/lib/types";
 
 export default function BoardView({
@@ -12,9 +13,15 @@ export default function BoardView({
 }) {
   const { viewedBoards } = useSelector(selectUserSession);
 
-  const completeBoard = board ?? viewedBoards.find((currBoard) => currBoard.kanbanBoard.id === boardId);
+  let completeBoard;
 
-  if (!completeBoard) return null;
+  if (boardId) {
+    completeBoard = viewedBoards[boardId]
+  } else if (board) {
+    completeBoard = board;
+  } else {
+    return <HomeBoardView />
+  }
 
   return (
     <div className="flex h-99/100 w-full">

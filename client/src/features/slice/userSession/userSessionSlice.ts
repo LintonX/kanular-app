@@ -13,19 +13,9 @@ const initialState: UserSessionState = {
     email: "",
   },
   isAuth: false,
-  activeBoard: {
-    kanbanBoard: {
-      id: undefined,
-      parentId: undefined,
-      homeBoard: undefined,
-      primaryBoard: undefined,
-      title: undefined,
-    },
-    kanbanColumns: [],
-    kanbanCards: [],
-  },
+  activeBoardId: "",
   primaryBoardsMetadata: [],
-  viewedBoards: [],
+  viewedBoards: {} as Record<string, CompleteKanbanBoard>,
 };
 
 const userSessionSlice = createSlice({
@@ -36,8 +26,17 @@ const userSessionSlice = createSlice({
       state.userAccount = action.payload;
       state.isAuth = true;
     },
-    setHomeBoard: (state, action: PayloadAction<CompleteKanbanBoard>) => {
-      state.activeBoard = action.payload;
+    setActiveBoard: (state, action: PayloadAction<CompleteKanbanBoard>) => {
+      console.log('in setActiveBoard', action.payload);
+      const { kanbanBoard } = action.payload;
+      const { id } = kanbanBoard;
+      if (id) {
+        state.viewedBoards = {
+          ...state.viewedBoards,
+          [id]: action.payload,
+        };
+        state.activeBoardId = id;
+      }
     },
     setAllPrimaryBoards: (state, action: PayloadAction<KanbanBoard[]>) => {
       const existingIds = new Set(
@@ -49,25 +48,64 @@ const userSessionSlice = createSlice({
       state.primaryBoardsMetadata.push(...newBoards);
     },
     setViewedBoards: (state, action: PayloadAction<CompleteKanbanBoard>) => {
-      console.log("in setViewedBoards", state.viewedBoards, action);
-      if (state.viewedBoards.some((board) => board.kanbanBoard.id === action.payload.kanbanBoard.id)) return;
-      state.viewedBoards = [action.payload, ...state.viewedBoards];
-      console.log('after', state.viewedBoards);
+      console.log("in setViewedBoards", state.viewedBoards, action.payload);
+      const {kanbanBoard} = action.payload;
+      const newBoardId = kanbanBoard.id;
+      if (!newBoardId || state.viewedBoards[newBoardId]) return;
+      state.viewedBoards[newBoardId] = action.payload;
+      console.log("after", state.viewedBoards);
     },
+
+    //need to change this logic as its coupled only with activeBoard aka homeboard and not the board in question.
+    // maybe go back to using active board instead of home board and then make appropriate updates to set activeboard with the clicked board
+    // via boardcard
     lazyCreateTask: (state, action: PayloadAction<KanbanCard>) => {
-      console.log("in create task slice", action.payload)
-      state.activeBoard.kanbanCards = [...state.activeBoard.kanbanCards, action.payload]
+      console.log("in create task reducer", action.payload);
+      const completeActiveBoard = state.viewedBoards[state.activeBoardId];
+      const { kanbanBoard, kanbanCards } = completeActiveBoard;
+      const { id } = kanbanBoard;
+      const updatedKanbanCards = [...kanbanCards, action.payload];
+      if (id) {
+        state.viewedBoards = {
+          ...state.viewedBoards,
+          [id]: {
+            ...completeActiveBoard,
+            kanbanCards: updatedKanbanCards,
+          },
+        };
+      }
     },
     lazyDeleteTask: (state, action: PayloadAction<string>) => {
-      console.log("in delete task slice", action.payload)
-      state.activeBoard.kanbanCards = state.activeBoard.kanbanCards.filter((card) => card.id !== action.payload)
+      console.log("in delete task reducer", action.payload);
+      const completeActiveBoard = state.viewedBoards[state.activeBoardId];
+      const { kanbanBoard, kanbanCards } = completeActiveBoard;
+      const { id } = kanbanBoard;
+      if (id) {
+        const updatedKanbanCards = kanbanCards.filter(
+          (card) => card.id !== action.payload
+        );
+        state.viewedBoards = {
+          ...state.viewedBoards,
+          [id]: {
+            ...completeActiveBoard,
+            kanbanCards: updatedKanbanCards,
+          },
+        };
+      }
     },
     setLogOut: () => initialState,
   },
 });
 
-export const { setUserSession, setHomeBoard, setAllPrimaryBoards, setViewedBoards, setLogOut, lazyCreateTask, lazyDeleteTask } =
-  userSessionSlice.actions;
+export const {
+  setUserSession,
+  setActiveBoard,
+  setAllPrimaryBoards,
+  setViewedBoards,
+  setLogOut,
+  lazyCreateTask,
+  lazyDeleteTask,
+} = userSessionSlice.actions;
 export default userSessionSlice.reducer;
 export const selectUserSession = (state: { userSession: UserSessionState }) =>
   state.userSession;

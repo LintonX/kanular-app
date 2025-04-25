@@ -33,9 +33,9 @@ export type UserAccountDto = {
 export type UserSessionState = {
   userAccount: UserAccountDto;
   isAuth: boolean;
-  activeBoard: CompleteKanbanBoard;
+  activeBoardId: string;
   primaryBoardsMetadata: KanbanBoard[];
-  viewedBoards: CompleteKanbanBoard[];
+  viewedBoards: Record<string, CompleteKanbanBoard>;
 }
 
 export type SidebarState = {

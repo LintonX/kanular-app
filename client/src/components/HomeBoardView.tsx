@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import BoardView from "./BoardView";
 import { useGetHomeBoardQuery } from "@/features/api/board-api";
-import { setHomeBoard } from "@/features/slice/userSession/userSessionSlice";
+import { setActiveBoard } from "@/features/slice/userSession/userSessionSlice";
 import { useEffect } from "react";
 import LoadingBoard from "./LoadingBoard";
 
@@ -20,7 +20,7 @@ export default function HomeBoardView() {
 
   useEffect(() => {
     if (homeBoard) {
-      dispatch(setHomeBoard(homeBoard));
+      dispatch(setActiveBoard(homeBoard));
     }
   }, [homeBoard, dispatch]);
 

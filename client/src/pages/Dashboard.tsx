@@ -7,13 +7,16 @@ import CalendarView from "@/components/CalendarView";
 import HomeBoardView from "@/components/HomeBoardView";
 import { useSelector } from "react-redux";
 import { selectUserSidebar } from "@/features/slice/userSidebar/userSidebarSlice";
+import { selectUserSession } from "@/features/slice/userSession/userSessionSlice";
+import LoadingBoard from "@/components/LoadingBoard";
 
 export default function Dashboard() {
   const param = useParams();
   const [query] = useSearchParams();
-
+  const userSession = useSelector(selectUserSession);
   const userSidebar = useSelector(selectUserSidebar);
-  console.log("SIDEBAR STATEeeeeeeeeeeeeee",userSidebar);
+
+  console.log("SIDEBAR STATEeeeeeeeeeeeeee", userSidebar);
   const queriedBoardId = query.get("board");
 
   return (
@@ -25,9 +28,8 @@ export default function Dashboard() {
           <div className="flex">
             {(() => {
               if (param.view === "boards") return <AllPrimaryBoardsView />;
-              if (queriedBoardId) return <BoardView boardId={queriedBoardId} />;
               if (param.view === "calendar") return <CalendarView />;
-              if (!param.view || param.view === "") return <HomeBoardView />;
+              if (!param.view || param.view === "") return <BoardView boardId={userSession.activeBoardId} />;
               return null;
             })()}
           </div>

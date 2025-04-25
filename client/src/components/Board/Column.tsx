@@ -1,7 +1,7 @@
 import { KanbanCard, KanbanColumn, Stage } from "@/lib/types";
 import TaskCard from "./TaskCard";
 import { getStage } from "@/lib/utils";
-import AddTaskModal from "../CreateTaskModal";
+import CreateTaskModal from "../CreateTaskModal";
 
 export default function Column({
   column,
@@ -43,7 +43,7 @@ export default function Column({
       </div>
       <div className="mt-1">
         {isTodoColumn && (
-          <AddTaskModal parentId={column.id!} stage={column.stage!} />
+          <CreateTaskModal parentId={column.id!} stage={column.stage!} />
         )}
       </div>
     </div>

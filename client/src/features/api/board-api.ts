@@ -28,6 +28,7 @@ const boardApi = baseApi.injectEndpoints({
         method: "GET",
         params: { boardId, primaryBoard, homeBoard }
       }),
+      // providesTags: (result) => [{type: 'PrimaryBoards', id: result?.kanbanBoard.id}]
     }),
     getAllPrimaryBoards: builder.query<KanbanBoard[], void>({
       query: () => ({
@@ -65,7 +66,6 @@ const boardApi = baseApi.injectEndpoints({
           'Content-Type': 'text/plain',
         }
       }),
-      // invalidatesTags: () => [{ type: 'ActiveBoard' }],
     }),
     createNewPrimaryBoard: builder.mutation<void, string>({
       query: ( boardTitle ) => ({

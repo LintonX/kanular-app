@@ -1,13 +1,11 @@
 import { SidebarItem } from "@/lib/types";
 import { Link } from "react-router-dom";
-import { Separator } from "./ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectUserSidebar,
   setSelectedView,
 } from "@/features/slice/userSidebar/userSidebarSlice";
 import React from "react";
-import { SIDEBAR_ITEMS } from "@/lib/constants";
 
 export default function DashboardSidebar({
   sidebarItems,
@@ -23,7 +21,7 @@ export default function DashboardSidebar({
         <h1 className="text-3xl font-semibold">Dashboard</h1>
         <div className="flex flex-col mt-16">
           <ul className="list-none w-full">
-            {sidebarItems.map((item, index) => (
+            {sidebarItems.map((item) => (
               <React.Fragment key={item.name}>
                 <Link to={item.path}>
                   <li
@@ -37,7 +35,6 @@ export default function DashboardSidebar({
                     {item.name}
                   </li>
                 </Link>
-                {index === SIDEBAR_ITEMS.length - 1 && <Separator className="opacity-20 mb-2" />}
               </React.Fragment>
             ))}
           </ul>

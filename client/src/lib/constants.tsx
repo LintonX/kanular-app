@@ -1,12 +1,12 @@
 import { SidebarItem } from "./types";
 
-export const HOME_BOARD = "Home Board";
+export const ACTIVE_BOARD = "Active Board";
 export const BOARDS = "Boards";
 export const CALENDAR = "Calendar";
 export const AUTH_DASHBOARD = "/auth/dashboard";
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
-  { name: HOME_BOARD, path: AUTH_DASHBOARD },
+  { name: ACTIVE_BOARD, path: AUTH_DASHBOARD },
   { name: BOARDS, path: `${AUTH_DASHBOARD}/boards` },
   { name: CALENDAR, path: `${AUTH_DASHBOARD}/calendar` },
 ];

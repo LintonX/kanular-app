@@ -8,17 +8,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectUserSession,
+  setActiveBoard,
   setViewedBoards,
 } from "@/features/slice/userSession/userSessionSlice";
-import {
-  addSidebarItem,
-  selectUserSidebar,
-  setSelectedView,
-} from "@/features/slice/userSidebar/userSidebarSlice";
-import { AUTH_DASHBOARD, SIDEBAR_ITEMS } from "@/lib/constants";
+import { selectUserSidebar, setSelectedView } from "@/features/slice/userSidebar/userSidebarSlice";
 import { store } from "@/state/store";
 import { useNavigate } from "react-router-dom";
-import LoadingBoard from "./LoadingBoard";
 import { useEffect } from "react";
 
 export default function BoardCard({
@@ -31,7 +26,7 @@ export default function BoardCard({
   const heartSize = 34;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { activeBoard, viewedBoards } = useSelector(selectUserSession);
+  const { activeBoardId, viewedBoards } = useSelector(selectUserSession);
   const { sidebarItems } = useSelector(selectUserSidebar);
   const [setNewFavorite] = useSetNewFavoriteMutation();
   const [getCompleteBoard, { isLoading, isFetching }] =
@@ -50,54 +45,39 @@ export default function BoardCard({
 
   const handleFetchAndNavToCompleteBoard = async () => {
     console.log("in handleFetchCompleteBoard");
-    if (boardMetadata.id === activeBoard.kanbanBoard.id) {
-      dispatch(setSelectedView(SIDEBAR_ITEMS[0]));
-      navigate(AUTH_DASHBOARD);
+    if (isLoading || isFetching) return;
+    if (boardMetadata.id === activeBoardId) {
+      // clicked board is already the current active board
+      dispatch(setActiveBoard(viewedBoards[activeBoardId]));
+      dispatch(setSelectedView(sidebarItems[0]));
+      navigate(sidebarItems[0].path);
       return;
     }
-    if (isLoading || isFetching) return;
+
+    //  add logic to skip the next part if the board is already in viewed boards
+    // clicked board is not active board, we need to fetch and make active
     try {
       const completeKanbanBoard = await getCompleteBoard(
         boardMetadata
       ).unwrap();
-      dispatch(setViewedBoards(completeKanbanBoard));
-      handleAddBoardToSidebar(completeKanbanBoard);
+      handleMakeActiveBoard(completeKanbanBoard);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleAddBoardToSidebar = (
-    completeKanbanboard: CompleteKanbanBoard
-  ) => {
-    console.log("in handleAddBoardToSidebar", viewedBoards);
+  const handleMakeActiveBoard = (completeKanbanBoard: CompleteKanbanBoard) => {
+    console.log("in handleMakeActiveBoard", viewedBoards);
 
-    if (!completeKanbanboard.kanbanBoard.id) return;
-
+    if (!completeKanbanBoard.kanbanBoard.id) return;
+    console.log("complete board", completeKanbanBoard);
+    dispatch(setViewedBoards(completeKanbanBoard));
     const updatedViewedBoards = store.getState().userSession.viewedBoards;
 
-    const existingSidebarItem = sidebarItems.find(
-      (board) => board.name === completeKanbanboard.kanbanBoard.title
-    );
-
-    if (existingSidebarItem) {
-      dispatch(setSelectedView(existingSidebarItem));
-      navigate(existingSidebarItem.path);
-      return;
-    }
-
-    if (
-      updatedViewedBoards.some(
-        (board) => board.kanbanBoard.id === completeKanbanboard.kanbanBoard.id
-      )
-    ) {
-      const newItem = {
-        name: completeKanbanboard.kanbanBoard.title!,
-        path: `${AUTH_DASHBOARD}?board=${completeKanbanboard.kanbanBoard.id}`,
-      };
-      dispatch(addSidebarItem(newItem));
-      dispatch(setSelectedView(newItem));
-      navigate(newItem.path);
+    if (updatedViewedBoards[completeKanbanBoard.kanbanBoard.id]) {
+      dispatch(setActiveBoard(updatedViewedBoards[completeKanbanBoard.kanbanBoard.id]));
+      dispatch(setSelectedView(sidebarItems[0]));
+      navigate(sidebarItems[0].path);
       return;
     }
   };
