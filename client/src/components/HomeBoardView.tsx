@@ -13,16 +13,28 @@ export default function HomeBoardView() {
     data: homeBoard,
     isFetching,
     isLoading,
-  } = useGetHomeBoardQuery({
-    primaryBoard: true,
-    homeBoard: true,
-  }, {refetchOnMountOrArgChange: refetchAfterSeconds});
+  } = useGetHomeBoardQuery(
+    {
+      primaryBoard: true,
+      homeBoard: true,
+    },
+    { refetchOnMountOrArgChange: refetchAfterSeconds }
+  );
 
   useEffect(() => {
     if (homeBoard) {
+      console.log("home board", homeBoard);
       dispatch(setActiveBoard(homeBoard));
     }
   }, [homeBoard, dispatch]);
 
-  return <>{isLoading || isFetching ? <LoadingBoard /> : <BoardView board={homeBoard} />}</>;
+  return (
+    <>
+      {isLoading || isFetching ? (
+        <LoadingBoard />
+      ) : (
+        <BoardView board={homeBoard} />
+      )}
+    </>
+  );
 }

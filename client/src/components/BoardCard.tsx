@@ -7,11 +7,15 @@ import {
 } from "@/features/api/board-api";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearBoardStack,
   selectUserSession,
   setActiveBoard,
   setViewedBoards,
 } from "@/features/slice/userSession/userSessionSlice";
-import { selectUserSidebar, setSelectedView } from "@/features/slice/userSidebar/userSidebarSlice";
+import {
+  selectUserSidebar,
+  setSelectedView,
+} from "@/features/slice/userSidebar/userSidebarSlice";
 import { store } from "@/state/store";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -26,7 +30,7 @@ export default function BoardCard({
   const heartSize = 34;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { activeBoardId, viewedBoards } = useSelector(selectUserSession);
+  const { activeBoardStack, viewedBoards } = useSelector(selectUserSession);
   const { sidebarItems } = useSelector(selectUserSidebar);
   const [setNewFavorite] = useSetNewFavoriteMutation();
   const [getCompleteBoard, { isLoading, isFetching }] =
@@ -46,9 +50,9 @@ export default function BoardCard({
   const handleFetchAndNavToCompleteBoard = async () => {
     console.log("in handleFetchCompleteBoard");
     if (isLoading || isFetching) return;
-    if (boardMetadata.id === activeBoardId) {
+    if (boardMetadata.id === activeBoardStack.peek()) {
       // clicked board is already the current active board
-      dispatch(setActiveBoard(viewedBoards[activeBoardId]));
+      //   dispatch(setActiveBoard(viewedBoards[activeBoardStack.peek()!]));
       dispatch(setSelectedView(sidebarItems[0]));
       navigate(sidebarItems[0].path);
       return;
@@ -75,7 +79,11 @@ export default function BoardCard({
     const updatedViewedBoards = store.getState().userSession.viewedBoards;
 
     if (updatedViewedBoards[completeKanbanBoard.kanbanBoard.id]) {
-      dispatch(setActiveBoard(updatedViewedBoards[completeKanbanBoard.kanbanBoard.id]));
+      // need to clear the existing stack
+      dispatch(clearBoardStack());
+      dispatch(
+        setActiveBoard(updatedViewedBoards[completeKanbanBoard.kanbanBoard.id])
+      );
       dispatch(setSelectedView(sidebarItems[0]));
       navigate(sidebarItems[0].path);
       return;

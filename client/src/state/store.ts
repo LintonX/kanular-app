@@ -10,7 +10,7 @@ export const store = configureStore({
     userSidebar: userSidebarReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware),
+    getDefaultMiddleware({serializableCheck: false}).concat(baseApi.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch; 

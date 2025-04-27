@@ -9,7 +9,7 @@ const boardApi = baseApi.injectEndpoints({
       query: ({ primaryBoard, homeBoard }) => ({
         url: "/v1/getKanbanBoardByParentId",
         method: "GET",
-        params: { primaryBoard, homeBoard },
+        params: { parentId: "", primaryBoard, homeBoard },
       }),
       providesTags: (result) =>
         result
@@ -28,6 +28,13 @@ const boardApi = baseApi.injectEndpoints({
         method: "GET",
         params: { boardId, primaryBoard, homeBoard }
       }),
+    }),
+    getCompleteBoardByParentId: builder.query<CompleteKanbanBoard, {parentId: string, primaryBoard: boolean, homeBoard: boolean}> ({
+      query: ( {parentId, primaryBoard, homeBoard} ) => ({
+        url: "/v1/getKanbanBoardByParentId",
+        method: "GET",
+        params: {parentId, primaryBoard, homeBoard}
+      })
     }),
     getAllPrimaryBoards: builder.query<KanbanBoard[], void>({
       query: () => ({
@@ -112,6 +119,7 @@ const boardApi = baseApi.injectEndpoints({
 
 export const {
   useGetHomeBoardQuery,
+  useLazyGetCompleteBoardByParentIdQuery,
   useGetAllPrimaryBoardsQuery,
   useLazyGetCompleteBoardByIdQuery,
   useHydrateDashboardQuery,

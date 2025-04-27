@@ -23,7 +23,7 @@ export default function Dashboard() {
             {(() => {
               if (param.view === "boards") return <AllPrimaryBoardsView />;
               if (param.view === "calendar") return <CalendarView />;
-              if (!param.view || param.view === "") return <BoardView boardId={userSession.activeBoardId} />;
+              if (!param.view || param.view === "") return <BoardView boardId={userSession.activeBoardStack.peek()} />;
               return null;
             })()}
           </div>

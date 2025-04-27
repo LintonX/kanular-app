@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import Column from "./Column";
 import { CompleteKanbanBoard, KanbanCard, Stage } from "@/lib/types";
-import { selectUserSession, setActiveBoard } from "@/features/slice/userSession/userSessionSlice";
+import { removeFromBoardStack, } from "@/features/slice/userSession/userSessionSlice";
 import { selectUserSidebar, setSelectedView } from "@/features/slice/userSidebar/userSidebarSlice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
+import { ChevronLeft } from "lucide-react";
 
 export default function Board({
   completeBoard,
@@ -13,7 +14,6 @@ export default function Board({
 }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { viewedBoards } = useSelector(selectUserSession);
   const { sidebarItems } = useSelector(selectUserSidebar);
 
   if (!completeBoard) {
@@ -31,7 +31,7 @@ export default function Board({
 
   const handleGoBack = () => {
     console.log("PRESSED PRESSED PRESSED")
-    dispatch(setActiveBoard(viewedBoards[kanbanColumns[0].parentId!]));
+    dispatch(removeFromBoardStack());
     dispatch(setSelectedView(sidebarItems[0]));
     navigate(sidebarItems[0].path);
   }
@@ -39,7 +39,7 @@ export default function Board({
   return (
     <div className="h-full">
       <h1 className="flex items-center font-bold text-2xl mb-2 gap-4">
-        {!kanbanBoard.primaryBoard && <Button variant={"outline"} onClick={handleGoBack} className="h-7">{"< Go Back"}</Button>}
+        {!kanbanBoard.primaryBoard && <Button variant={"outline"} onClick={handleGoBack} className="h-7"><ChevronLeft className="-mr-2 -ml-1" />Go Back</Button>}
         {kanbanBoard.title}
       </h1>
       <div className="grid grid-cols-4 gap-2 h-[670px] w-full">

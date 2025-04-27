@@ -6,6 +6,7 @@ import {
   UserAccountDto,
   UserSessionState,
 } from "@/lib/types";
+import { BoardViewStack } from "@/lib/BoardViewStack";
 
 const initialState: UserSessionState = {
   userAccount: {
@@ -13,7 +14,7 @@ const initialState: UserSessionState = {
     email: "",
   },
   isAuth: false,
-  activeBoardId: "",
+  activeBoardStack: new BoardViewStack(),
   primaryBoardsMetadata: [],
   viewedBoards: {} as Record<string, CompleteKanbanBoard>,
 };
@@ -35,10 +36,19 @@ const userSessionSlice = createSlice({
           ...state.viewedBoards,
           [id]: action.payload,
         };
-        state.activeBoardId = id;
+        state.activeBoardStack.push(id);
       }
     },
+    removeFromBoardStack: (state) => {
+      console.log('in removeFromBoardStack reducer');
+      state.activeBoardStack.pop();      
+    },
+    clearBoardStack: (state) => {
+      console.log('in clearBoardStack reducer')
+      state.activeBoardStack.clear();
+    },
     setAllPrimaryBoards: (state, action: PayloadAction<KanbanBoard[]>) => {
+      console.log('in setAllPrimaryBoards reducer')
       const existingIds = new Set(
         state.primaryBoardsMetadata.map((board) => board.id)
       );
@@ -56,8 +66,10 @@ const userSessionSlice = createSlice({
       console.log("after", state.viewedBoards);
     },
     lazyCreateTask: (state, action: PayloadAction<KanbanCard>) => {
-      console.log("in create task reducer", action.payload);
-      const completeActiveBoard = state.viewedBoards[state.activeBoardId];
+      console.log("in lazyCreateTask reducer", action.payload);
+      const activeBoardId = state.activeBoardStack.peek();
+      if (!activeBoardId) return;
+      const completeActiveBoard = state.viewedBoards[activeBoardId];
       const { kanbanBoard, kanbanCards } = completeActiveBoard;
       const { id } = kanbanBoard;
       const updatedKanbanCards = [...kanbanCards, action.payload];
@@ -72,8 +84,10 @@ const userSessionSlice = createSlice({
       }
     },
     lazyDeleteTask: (state, action: PayloadAction<string>) => {
-      console.log("in delete task reducer", action.payload);
-      const completeActiveBoard = state.viewedBoards[state.activeBoardId];
+      console.log("in lazyDeleteTask reducer", action.payload);
+      const activeBoardId = state.activeBoardStack.peek();
+      if (!activeBoardId) return;
+      const completeActiveBoard = state.viewedBoards[activeBoardId];
       const { kanbanBoard, kanbanCards } = completeActiveBoard;
       const { id } = kanbanBoard;
       if (id) {
@@ -96,6 +110,8 @@ const userSessionSlice = createSlice({
 export const {
   setUserSession,
   setActiveBoard,
+  removeFromBoardStack,
+  clearBoardStack,
   setAllPrimaryBoards,
   setViewedBoards,
   setLogOut,

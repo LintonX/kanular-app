@@ -11,7 +11,10 @@ import { Button } from "./ui/button";
 import { LoaderCircle } from "lucide-react";
 import { useCreateChildBoardMutation } from "@/features/api/board-api";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveBoard, setViewedBoards } from "@/features/slice/userSession/userSessionSlice";
+import {
+  setActiveBoard,
+  setViewedBoards,
+} from "@/features/slice/userSession/userSessionSlice";
 import {
   selectUserSidebar,
   setSelectedView,
@@ -66,7 +69,7 @@ export default function KanulizeModal({
       }}
     >
       <DialogTrigger asChild>
-        <Button variant={"outline"} className="flex bg-none text-sm h-7">
+        <Button variant={"outline"} className="flex bg-none text-sm h-6">
           Kanulize
         </Button>
       </DialogTrigger>

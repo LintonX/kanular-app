@@ -125,10 +125,12 @@ public class KanbanBoardController {
     }
 
     @GetMapping("/api/v1/getKanbanBoardByParentId")
-    public ResponseEntity<CompleteKanbanBoard> getKanbanBoardByParentId(@RequestParam boolean primaryBoard,
+    public ResponseEntity<CompleteKanbanBoard> getKanbanBoardByParentId(@RequestParam String parentId,
+                                                                        @RequestParam boolean primaryBoard,
                                                                         @RequestParam boolean homeBoard,
                                                                         HttpServletRequest request) {
-        log.info("➡️ Entered: KanbanBoardController.getKanbanBoard()");
+        log.info("➡️ Entered: KanbanBoardController.getKanbanBoardByParentId()");
+        log.info(parentId, primaryBoard, homeBoard);
 
         final String jwt = jwtService.extractJwtFromCookies(request);
         final UserAccountDto userAccountDto = jwtService.verifyJwt(jwt);
@@ -138,7 +140,11 @@ public class KanbanBoardController {
         }
 
         final CompleteKanbanBoard completeKanbanBoard =
-                kanbanBoardService.getKanbanBoardByParentId(UUID.fromString(userAccountDto.getId()), primaryBoard, homeBoard);
+                kanbanBoardService.getKanbanBoardByParentId(
+                        !parentId.isEmpty() ?
+                                UUID.fromString(parentId) : UUID.fromString(userAccountDto.getId()),
+                        primaryBoard,
+                        homeBoard);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(completeKanbanBoard);
     }

@@ -1,3 +1,5 @@
+import { BoardViewStack } from "./BoardViewStack";
+
 export type SidebarItem = {
   name: string;
   path: string;
@@ -33,7 +35,7 @@ export type UserAccountDto = {
 export type UserSessionState = {
   userAccount: UserAccountDto;
   isAuth: boolean;
-  activeBoardId: string;
+  activeBoardStack: BoardViewStack;
   primaryBoardsMetadata: KanbanBoard[];
   viewedBoards: Record<string, CompleteKanbanBoard>;
 }
