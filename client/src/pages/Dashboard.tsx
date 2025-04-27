@@ -1,23 +1,17 @@
 import DashboardSidebar from "@/components/DashboardSidebar";
-import { useParams, useSearchParams } from "react-router-dom";
 import BoardView from "@/components/BoardView";
 import ProfileHeader from "@/components/ProfileHeader";
 import AllPrimaryBoardsView from "@/components/AllPrimaryBoardsView";
 import CalendarView from "@/components/CalendarView";
-import HomeBoardView from "@/components/HomeBoardView";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUserSidebar } from "@/features/slice/userSidebar/userSidebarSlice";
 import { selectUserSession } from "@/features/slice/userSession/userSessionSlice";
-import LoadingBoard from "@/components/LoadingBoard";
 
 export default function Dashboard() {
   const param = useParams();
-  const [query] = useSearchParams();
   const userSession = useSelector(selectUserSession);
   const userSidebar = useSelector(selectUserSidebar);
-
-  console.log("SIDEBAR STATEeeeeeeeeeeeeee", userSidebar);
-  const queriedBoardId = query.get("board");
 
   return (
     <div className="flex flex-col h-full w-screen bg-secondary-black">

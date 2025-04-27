@@ -86,8 +86,7 @@ public class KanbanBoardController {
     }
 
     @PostMapping("/api/v1/createChildKanbanBoard")
-    public ResponseEntity<CompleteKanbanBoard> createChildKanbanBoard(@RequestBody String parentId,
-                                                                      @RequestBody String title,
+    public ResponseEntity<CompleteKanbanBoard> createChildKanbanBoard(@RequestBody CreateChildKanbanBoardDto createChildKanbanBoardDto,
                                                                       HttpServletRequest request) {
         log.info("➡️ Entered: KanbanBoardController.createChildKanbanBoard()");
 
@@ -99,7 +98,7 @@ public class KanbanBoardController {
         }
 
         final CompleteKanbanBoard completeKanbanBoard =
-                kanbanBoardService.createKanbanBoard(UUID.fromString(parentId), title, false, false);
+                kanbanBoardService.createChildKanbanBoard(createChildKanbanBoardDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(completeKanbanBoard);
 

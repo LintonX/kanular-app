@@ -55,10 +55,6 @@ const userSessionSlice = createSlice({
       state.viewedBoards[newBoardId] = action.payload;
       console.log("after", state.viewedBoards);
     },
-
-    //need to change this logic as its coupled only with activeBoard aka homeboard and not the board in question.
-    // maybe go back to using active board instead of home board and then make appropriate updates to set activeboard with the clicked board
-    // via boardcard
     lazyCreateTask: (state, action: PayloadAction<KanbanCard>) => {
       console.log("in create task reducer", action.payload);
       const completeActiveBoard = state.viewedBoards[state.activeBoardId];

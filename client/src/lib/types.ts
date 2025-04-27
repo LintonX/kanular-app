@@ -71,6 +71,7 @@ export type KanbanCard = {
   stage?: Stage; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
   hasChildBoard?: boolean;
   timeCreated?: string;
+  // childBoard?: CompleteKanbanBoard;
 }
 
 export enum Stage {

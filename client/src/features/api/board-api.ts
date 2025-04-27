@@ -28,7 +28,6 @@ const boardApi = baseApi.injectEndpoints({
         method: "GET",
         params: { boardId, primaryBoard, homeBoard }
       }),
-      // providesTags: (result) => [{type: 'PrimaryBoards', id: result?.kanbanBoard.id}]
     }),
     getAllPrimaryBoards: builder.query<KanbanBoard[], void>({
       query: () => ({
@@ -78,6 +77,14 @@ const boardApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: "PrimaryBoards", id: 'LIST' }],
     }),
+    createChildBoard: builder.mutation<CompleteKanbanBoard, {parentId: string, taskTitle: string}>({
+      query: ( {parentId, taskTitle} ) => ({
+        url: "/v1/createChildKanbanBoard",
+        method: "POST",
+        body: {parentId, taskTitle},
+      }),
+      // invalidatesTags: () => [{ type: "PrimaryBoards", id: 'LIST' }],
+    }),
     deleteBoard: builder.mutation<void, string>({
       query: ( boardId ) => ({
         url: "/v1/deleteBoard",
@@ -112,6 +119,7 @@ export const {
   useCreateTaskMutation,
   useDeleteTaskMutation,
   useCreateNewPrimaryBoardMutation,
+  useCreateChildBoardMutation,
   useDeleteBoardMutation, 
   useSetNewFavoriteMutation,
 } = boardApi;

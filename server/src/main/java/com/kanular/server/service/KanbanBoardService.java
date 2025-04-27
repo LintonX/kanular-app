@@ -4,6 +4,7 @@ import com.kanular.server.dal.repositories.KanbanBoardRepository;
 import com.kanular.server.dal.repositories.KanbanCardRepository;
 import com.kanular.server.dal.repositories.KanbanColumnRepository;
 import com.kanular.server.models.CompleteKanbanBoard;
+import com.kanular.server.models.CreateChildKanbanBoardDto;
 import com.kanular.server.models.Stage;
 import com.kanular.server.models.entities.KanbanBoard;
 import com.kanular.server.models.entities.KanbanCard;
@@ -246,8 +247,9 @@ public class KanbanBoardService {
             final KanbanCard[] cardsToBeDeleted = kanbanCardRepository.findAllByParentId(column.getId()).toArray(new KanbanCard[0]);
             for (final KanbanCard card: cardsToBeDeleted) {
                 if (card.isHasChildBoard()) {
-                    final KanbanBoard childBoardToBeDeleted = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsFalse(card.getId()).orElseThrow(() -> new RuntimeException("Did not find a child board of card: " + card.getId()));
-                    this.deleteBoard(childBoardToBeDeleted.getId());
+                    this.deleteTask(card.getId());
+//                    final KanbanBoard childBoardToBeDeleted = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsFalse(card.getId()).orElseThrow(() -> new RuntimeException("Did not find a child board of card: " + card.getId()));
+//                    this.deleteBoard(childBoardToBeDeleted.getId());
                 }
                 kanbanCardRepository.deleteById(card.getId());
             }
@@ -277,8 +279,38 @@ public class KanbanBoardService {
     @Transactional
     public UUID deleteTask(@NonNull UUID taskId) {
         log.info("➡️ Entered: KanbanBoardService.deleteTask()");
+        final KanbanCard cardToBeDeleted = kanbanCardRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Could not delete card as card was not found"));
+
+        if (cardToBeDeleted.isHasChildBoard()) {
+            final KanbanBoard childBoard =
+                    kanbanBoardRepository.findByParentIdAndPrimaryBoardIsFalse(cardToBeDeleted.getId())
+                            .orElseThrow(
+                                    () -> new RuntimeException("Could not delete task as child board was not found")
+                            );
+            this.deleteBoard(childBoard.getId());
+        }
+
         final int result = kanbanCardRepository.deleteByIdAndReturnCount(taskId);
 
         return result == 1 ? taskId : null;
+    }
+
+    @Transactional
+    public CompleteKanbanBoard createChildKanbanBoard(@NonNull CreateChildKanbanBoardDto createChildKanbanBoardDto) {
+        log.info("➡️ Entered: KanbanBoardService.createChildKanbanBoard()");
+        final CompleteKanbanBoard completeKanbanBoard =
+                this.createKanbanBoard(
+                        UUID.fromString(createChildKanbanBoardDto.getParentId()),
+                        createChildKanbanBoardDto.getTaskTitle(),
+                        false,
+                        false
+                );
+        final int wasCardUpdated = kanbanCardRepository.updateHasChild(
+                UUID.fromString(createChildKanbanBoardDto.getParentId()),
+                true
+        );
+
+        return completeKanbanBoard != null && wasCardUpdated == 1 ? completeKanbanBoard : null;
     }
 }

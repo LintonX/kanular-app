@@ -17,7 +17,7 @@ export default function Column({
 
   return (
     <div
-      className={`flex flex-col bg-white h-[670px] w-[282px] p-2 rounded-lg shadow-sm/2`}
+      className={`flex flex-col bg-white h-[670px] w-[282px] p-2 rounded-lg shadow-sm/2 border-t border-orange-50 backdrop-blur-2xl border-opacity-30`}
     >
       <div
         className={`${

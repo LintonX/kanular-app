@@ -41,6 +41,10 @@ public interface KanbanCardRepository extends CrudRepository<KanbanCard, UUID> {
     List<KanbanCard> findAllByParentId(UUID parentId);
 
     @Modifying
+    @Query("UPDATE KanbanCard u SET u.hasChildBoard = :hasChildBoard WHERE u.id = :id ")
+    int updateHasChild(@Param(value = "id") UUID id, @Param(value = "hasChildBoard") boolean hasChildBoard);
+
+    @Modifying
     @Query("UPDATE KanbanCard u SET u.body = :body WHERE u.id = :id")
     int updateCardBody(@Param(value = "id") UUID id, @Param(value = "body") String body);
 
