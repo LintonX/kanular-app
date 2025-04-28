@@ -47,7 +47,7 @@ export type SidebarState = {
 
 export type CompleteKanbanBoard = {
   kanbanBoard: KanbanBoard;
-  kanbanColumns: KanbanColumn[];
+  // kanbanColumns: KanbanColumn[];
   kanbanCards: KanbanCard[]
 }
 
@@ -59,11 +59,11 @@ export type KanbanBoard = {
   title?: string;
 }
 
-export type KanbanColumn = {
-  id?: string;
-  parentId?: string;
-  stage?: Stage; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
-}
+// export type KanbanColumn = {
+//   id?: string;
+//   parentId?: string;
+//   stage?: Stage; // TO_DO, IN_PROGRESS, IN_REVIEW, DONE
+// }
 
 export type KanbanCard = {
   id?: string;

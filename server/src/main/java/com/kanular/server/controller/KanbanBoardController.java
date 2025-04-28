@@ -139,12 +139,16 @@ public class KanbanBoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        final CompleteKanbanBoard completeKanbanBoard =
+        CompleteKanbanBoard completeKanbanBoard =
                 kanbanBoardService.getKanbanBoardByParentId(
                         !parentId.isEmpty() ?
                                 UUID.fromString(parentId) : UUID.fromString(userAccountDto.getId()),
                         primaryBoard,
                         homeBoard);
+
+        if (completeKanbanBoard == null) {
+            completeKanbanBoard = kanbanBoardService.getDefaultBoard(UUID.fromString(userAccountDto.getId()));
+        }
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(completeKanbanBoard);
     }

@@ -2,13 +2,13 @@ package com.kanular.server.service;
 
 import com.kanular.server.dal.repositories.KanbanBoardRepository;
 import com.kanular.server.dal.repositories.KanbanCardRepository;
-import com.kanular.server.dal.repositories.KanbanColumnRepository;
+//import com.kanular.server.dal.repositories.KanbanColumnRepository;
 import com.kanular.server.models.CompleteKanbanBoard;
 import com.kanular.server.models.CreateChildKanbanBoardDto;
 import com.kanular.server.models.Stage;
 import com.kanular.server.models.entities.KanbanBoard;
 import com.kanular.server.models.entities.KanbanCard;
-import com.kanular.server.models.entities.KanbanColumn;
+//import com.kanular.server.models.entities.KanbanColumn;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +23,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
+
 @Service
 @AllArgsConstructor
 @Slf4j
 public class KanbanBoardService {
 
     private final KanbanBoardRepository kanbanBoardRepository;
-    private final KanbanColumnRepository kanbanColumnRepository;
+//    private final KanbanColumnRepository kanbanColumnRepository;
     private final KanbanCardRepository kanbanCardRepository;
 
     @Transactional
@@ -44,21 +45,21 @@ public class KanbanBoardService {
                         .primaryBoard(true)
                         .build()
         );
-        final KanbanColumn kanbanColumnToDo = kanbanColumnRepository.save(
-                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.TO_DO).build()
-        );
-        final KanbanColumn kanbanColumnInProgress = kanbanColumnRepository.save(
-                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.IN_PROGRESS).build()
-        );
-        final KanbanColumn kanbanColumnInReview = kanbanColumnRepository.save(
-                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.IN_REVIEW).build()
-        );
-        final KanbanColumn kanbanColumnDone = kanbanColumnRepository.save(
-                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.DONE).build()
-        );
+//        final KanbanColumn kanbanColumnToDo = kanbanColumnRepository.save(
+//                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.TO_DO).build()
+//        );
+//        final KanbanColumn kanbanColumnInProgress = kanbanColumnRepository.save(
+//                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.IN_PROGRESS).build()
+//        );
+//        final KanbanColumn kanbanColumnInReview = kanbanColumnRepository.save(
+//                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.IN_REVIEW).build()
+//        );
+//        final KanbanColumn kanbanColumnDone = kanbanColumnRepository.save(
+//                KanbanColumn.builder().parentId(kanbanBoard.getId()).stage(Stage.DONE).build()
+//        );
         final KanbanCard kanbanCardTodo = kanbanCardRepository.save(
                 KanbanCard.builder()
-                        .parentId(kanbanColumnToDo.getId())
+                        .parentId(kanbanBoard.getId())
                         .stage(Stage.TO_DO)
                         .title("\uD83D\uDC4B Welcome to Kanular!")
                         .body("This is your first Kanban board. Click on a card to edit it.")
@@ -67,7 +68,7 @@ public class KanbanBoardService {
         );
         final KanbanCard kanbanCardInProgress = kanbanCardRepository.save(
                 KanbanCard.builder()
-                        .parentId(kanbanColumnInProgress.getId())
+                        .parentId(kanbanBoard.getId())
                         .stage(Stage.IN_PROGRESS)
                         .title("💡 Tip: Drag cards around")
                         .body("Try dragging this card to another column to get a feel for it.")
@@ -77,7 +78,7 @@ public class KanbanBoardService {
 
         return CompleteKanbanBoard.builder()
                 .kanbanBoard(kanbanBoard)
-                .kanbanColumns(new KanbanColumn[]{kanbanColumnToDo, kanbanColumnInProgress, kanbanColumnInReview, kanbanColumnDone})
+//                .kanbanColumns(new KanbanColumn[]{kanbanColumnToDo, kanbanColumnInProgress, kanbanColumnInReview, kanbanColumnDone})
                 .kanbanCards(new KanbanCard[]{kanbanCardTodo, kanbanCardInProgress})
                 .build();
     }
@@ -85,14 +86,6 @@ public class KanbanBoardService {
     public KanbanBoard[] getAllPrimaryBoards(@NonNull UUID parentId) {
         return kanbanBoardRepository.findAllByParentIdAndPrimaryBoardIsTrue(parentId).toArray(new KanbanBoard[0]);
     }
-//
-//    public CompleteKanbanBoard createKanbanBoard(@NonNull final UUID parentId,
-//                                                 @NonNull final String title,
-//                                                 boolean primaryBoard) {
-//        log.info("➡️ Entered: KanbanBoardService.createKanbanBoard()");
-//
-//        return createKanbanBoard(parentId, title, primaryBoard, false);
-//    }
 
     public CompleteKanbanBoard createKanbanBoard(UUID parentId, String title, boolean primaryBoard, boolean homeBoard) {
         final KanbanBoard kanbanBoard = kanbanBoardRepository.save(KanbanBoard.builder()
@@ -103,16 +96,16 @@ public class KanbanBoardService {
                 .build()
         );
 
-        final List<KanbanColumn> kanbanColumns = kanbanColumnRepository.saveAll(Arrays.stream(Stage.values()).map(
-                stage -> KanbanColumn.builder()
-                        .stage(stage)
-                        .parentId(kanbanBoard.getId())
-                        .build()
-        ).toList());
+//        final List<KanbanColumn> kanbanColumns = kanbanColumnRepository.saveAll(Arrays.stream(Stage.values()).map(
+//                stage -> KanbanColumn.builder()
+//                        .stage(stage)
+//                        .parentId(kanbanBoard.getId())
+//                        .build()
+//        ).toList());
 
         return CompleteKanbanBoard.builder()
                 .kanbanBoard(kanbanBoard)
-                .kanbanColumns(kanbanColumns.toArray(new KanbanColumn[0]))
+//                .kanbanColumns(kanbanColumns.toArray(new KanbanColumn[0]))
                 .kanbanCards(new KanbanCard[]{})
                 .build();
     }
@@ -139,21 +132,19 @@ public class KanbanBoardService {
                     .orElseThrow(() -> new RuntimeException("Error gathering child board."));
         }
 
-        List<KanbanColumn> columns = StreamSupport
-                .stream(kanbanColumnRepository.findAllByParentId(kanbanBoard.getId()).spliterator(), false)
-                .toList();
+//        List<KanbanColumn> columns = StreamSupport
+//                .stream(kanbanColumnRepository.findAllByParentId(kanbanBoard.getId()).spliterator(), false)
+//                .toList();
 
-        List<UUID> columnIds = columns.stream()
-                .map(KanbanColumn::getId)
-                .toList();
+//        List<UUID> columnIds = columns.stream()
+//                .map(KanbanColumn::getId)
+//                .toList();
 
-        List<KanbanCard> cards = columnIds.stream()
-                .flatMap(columnId -> kanbanCardRepository.findAllByParentId(columnId).stream())
-                .toList();
+        final List<KanbanCard> cards = kanbanCardRepository.findAllByParentId(kanbanBoard.getId());
 
         final CompleteKanbanBoard completeKanbanBoard = CompleteKanbanBoard.builder()
                 .kanbanBoard(kanbanBoard)
-                .kanbanColumns(columns.toArray(new KanbanColumn[0]))
+//                .kanbanColumns(columns.toArray(new KanbanColumn[0]))
                 .kanbanCards(cards.toArray(new KanbanCard[0]))
                 .build();
 
@@ -172,33 +163,32 @@ public class KanbanBoardService {
 
         if (isHome && isPrimary) {
             // get main home board
-            kanbanBoard = kanbanBoardRepository.findByParentIdAndHomeBoardIsTrue(ownerId)
-                    .orElseThrow(() -> new RuntimeException("Error gathering home board."));
+            kanbanBoard = kanbanBoardRepository.findByParentIdAndHomeBoardIsTrue(ownerId).orElse(null);
         } else if (!isHome && isPrimary) {
             // get a primary board
-            kanbanBoard = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsTrue(ownerId)
-                    .orElseThrow(() -> new RuntimeException("Error gathering primary board."));
+            kanbanBoard = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsTrue(ownerId).orElse(null);
         } else {
             // get a child (nested) board
-            kanbanBoard = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsFalse(ownerId)
-                    .orElseThrow(() -> new RuntimeException("Error gathering child board."));
+            kanbanBoard = kanbanBoardRepository.findByParentIdAndPrimaryBoardIsFalse(ownerId).orElse(null);
         }
 
-        List<KanbanColumn> columns = StreamSupport
-                .stream(kanbanColumnRepository.findAllByParentId(kanbanBoard.getId()).spliterator(), false)
-                .toList();
+        if (kanbanBoard == null) {
+            return null;
+        }
 
-        List<UUID> columnIds = columns.stream()
-                .map(KanbanColumn::getId)
-                .toList();
+//        List<KanbanColumn> columns = StreamSupport
+//                .stream(kanbanColumnRepository.findAllByParentId(kanbanBoard.getId()).spliterator(), false)
+//                .toList();
 
-        List<KanbanCard> cards = columnIds.stream()
-                .flatMap(columnId -> kanbanCardRepository.findAllByParentId(columnId).stream())
-                .toList();
+//        List<UUID> columnIds = columns.stream()
+//                .map(KanbanColumn::getId)
+//                .toList();
+
+        final List<KanbanCard> cards = kanbanCardRepository.findAllByParentId(kanbanBoard.getId());
 
         final CompleteKanbanBoard completeKanbanBoard = CompleteKanbanBoard.builder()
                 .kanbanBoard(kanbanBoard)
-                .kanbanColumns(columns.toArray(new KanbanColumn[0]))
+//                .kanbanColumns(columns.toArray(new KanbanColumn[0]))
                 .kanbanCards(cards.toArray(new KanbanCard[0]))
                 .build();
 
@@ -242,9 +232,9 @@ public class KanbanBoardService {
         log.info("➡️ Entered: KanbanBoardService.deleteBoard()");
         final KanbanBoard boardToBeDeleted = kanbanBoardRepository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("Could not delete board: " + boardId + " as it was not found"));
-        final KanbanColumn[] columnsToBeDeleted = kanbanColumnRepository.findAllByParentId(boardToBeDeleted.getId()).toArray(new KanbanColumn[0]);
-        for (final KanbanColumn column: columnsToBeDeleted) {
-            final KanbanCard[] cardsToBeDeleted = kanbanCardRepository.findAllByParentId(column.getId()).toArray(new KanbanCard[0]);
+//        final KanbanColumn[] columnsToBeDeleted = kanbanColumnRepository.findAllByParentId(boardToBeDeleted.getId()).toArray(new KanbanColumn[0]);
+//        for (final KanbanColumn column: columnsToBeDeleted) {
+            final KanbanCard[] cardsToBeDeleted = kanbanCardRepository.findAllByParentId(boardToBeDeleted.getId()).toArray(new KanbanCard[0]);
             for (final KanbanCard card: cardsToBeDeleted) {
                 if (card.isHasChildBoard()) {
                     this.deleteTask(card.getId());
@@ -253,8 +243,8 @@ public class KanbanBoardService {
                 }
                 kanbanCardRepository.deleteById(card.getId());
             }
-            kanbanColumnRepository.deleteById(column.getId());
-        }
+//            kanbanColumnRepository.deleteById(column.getId());
+//        }
         kanbanBoardRepository.deleteById(boardToBeDeleted.getId());
     }
 

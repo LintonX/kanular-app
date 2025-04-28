@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { Slide, toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 import { SIDEBAR_ITEMS, STAGE_LABELS } from "./constants";
-import { SidebarItem } from "./types";
+import { SidebarItem, Stage } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -35,3 +35,10 @@ export const getSidebarItems = (additionalItems: SidebarItem[] = []) => {
     ...additionalItems,
   ];
 };
+
+export function parseStage(key: string): Stage {
+  if (key in Stage) {
+    return Stage[key as keyof typeof Stage];
+  }
+  throw new Error(`Invalid stage: ${key}`);
+}

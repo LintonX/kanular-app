@@ -12,6 +12,7 @@ import { LoaderCircle } from "lucide-react";
 import { useCreateChildBoardMutation } from "@/features/api/board-api";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  lazyUpdateTaskHasChild,
   setActiveBoard,
   setViewedBoards,
 } from "@/features/slice/userSession/userSessionSlice";
@@ -46,6 +47,7 @@ export default function KanulizeModal({
         //set taskcard childs board lazily
         //set as active board
         dispatch(setViewedBoards(completeChildBoard));
+        dispatch(lazyUpdateTaskHasChild(parentId))
         dispatch(setActiveBoard(completeChildBoard));
         dispatch(setSelectedView(sidebarItems[0]));
         navigate(sidebarItems[0].path);

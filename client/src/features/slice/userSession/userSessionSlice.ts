@@ -83,6 +83,17 @@ const userSessionSlice = createSlice({
         };
       }
     },
+    lazyUpdateTaskHasChild: (state, action: PayloadAction<string>) => {
+      const parentIdOfChildBoard = action.payload; // this is the parent (task) of the newly created child board
+      const activeBoardId = state.activeBoardStack.peek();
+      if (!activeBoardId) return;
+      const board = state.viewedBoards[activeBoardId];
+      if (!board) return;
+      const card = board.kanbanCards.find(card => card.id === parentIdOfChildBoard);
+      if (card) {
+        card.hasChildBoard = true;
+      }
+    },
     lazyDeleteTask: (state, action: PayloadAction<string>) => {
       console.log("in lazyDeleteTask reducer", action.payload);
       const activeBoardId = state.activeBoardStack.peek();
@@ -103,7 +114,10 @@ const userSessionSlice = createSlice({
         };
       }
     },
-    setLogOut: () => initialState,
+    setLogOut: (state) => {
+      state.activeBoardStack.clear();
+      return initialState;
+    },
   },
 });
 
@@ -116,6 +130,7 @@ export const {
   setViewedBoards,
   setLogOut,
   lazyCreateTask,
+  lazyUpdateTaskHasChild,
   lazyDeleteTask,
 } = userSessionSlice.actions;
 export default userSessionSlice.reducer;

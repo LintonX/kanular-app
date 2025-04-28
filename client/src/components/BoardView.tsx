@@ -16,11 +16,11 @@ export default function BoardView({
   let completeBoard;
 
   if (boardId) {
-    console.log("found boardId")
     completeBoard = viewedBoards[boardId]
+    console.log("found boardId", completeBoard);
   } else if (board) {
-    console.log("found board")
     completeBoard = board;
+    console.log("found board", completeBoard);
   } else {
     console.log("didnt find board, routing to home board view")
     return <HomeBoardView />

@@ -1,19 +1,24 @@
-import { KanbanCard, KanbanColumn, Stage } from "@/lib/types";
+import { KanbanCard, Stage } from "@/lib/types";
 import TaskCard from "./TaskCard";
-import { getStage } from "@/lib/utils";
+import { getStage, parseStage } from "@/lib/utils";
 import CreateTaskModal from "../CreateTaskModal";
 
 export default function Column({
   column,
+  boardId,
   cards,
   index,
 }: {
-  column: KanbanColumn;
+  column: string;
+  boardId: string;
   cards: KanbanCard[];
   index: number;
 }) {
-  const stage = getStage(column.stage!);
-  const isTodoColumn = stage === Stage.TO_DO;
+
+  console.log("column data", column, boardId, cards, index)
+
+  const stageTitle = getStage(column);
+  const isTodoColumn = stageTitle === Stage.TO_DO;
 
   return (
     <div
@@ -32,7 +37,7 @@ export default function Column({
             : "bg-primary-black"
         } -mx-2 -mt-2 p-2 mb-2 rounded-t-lg`}
       >
-        {stage}
+        {stageTitle}
       </div>
       <div className="overflow-y-scroll space-y-2">
         {cards
@@ -43,7 +48,7 @@ export default function Column({
       </div>
       <div className="mt-1">
         {isTodoColumn && (
-          <CreateTaskModal parentId={column.id!} stage={column.stage!} />
+          <CreateTaskModal parentId={boardId} stage={column as Stage} />
         )}
       </div>
     </div>

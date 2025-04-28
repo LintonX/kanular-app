@@ -1,4 +1,4 @@
-import { SidebarItem } from "./types";
+import { SidebarItem, Stage } from "./types";
 
 export const ACTIVE_BOARD = "Active Board";
 export const BOARDS = "Boards";
@@ -17,3 +17,5 @@ export const STAGE_LABELS: Record<string, string> = {
   ["IN_REVIEW"]: "In Review",
   ["DONE"]: "Done",
 };
+
+export const STAGE_COLUMNS: string[] = Object.keys(STAGE_LABELS);

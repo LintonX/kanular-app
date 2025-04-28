@@ -45,10 +45,10 @@ export default function EditableTextarea({
       />
       <div className="flex justify-start mt-1 gap-2">
         {isFocused && (
-          <div className="flex mt-1 w-full gap-2">
-            <Button className="flex h-7 text-xs font-normal w-2/7" variant={"outline"} onClick={() => setIsFocused(false)}>Cancel</Button>
+          <div className="flex mt-1 w-full gap-2 pt-1">
+            <Button className="flex h-6 text-xs font-normal w-2/7" variant={"outline"} onClick={() => setIsFocused(false)}>Cancel</Button>
             <Button
-              className="flex flex-auto h-7 text-xs font-normal"
+              className="flex flex-auto h-6 text-xs font-normal"
               variant="default"
               onClick={handleSave}
               disabled={isLoading}
