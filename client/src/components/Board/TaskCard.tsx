@@ -74,8 +74,7 @@ export default function TaskCard({
   return (
     <div
       className={`flex flex-col justify-between w-full min-h-32 max-h-fit rounded-lg p-2 mb-2
-    ${color} 
-    ${card.hasChildBoard ? `border-b-6 border-black/30` : ""}`}
+    ${color} ${card.hasChildBoard ? `border-b-6 border-black/30` : ""}`}
     >
       <div>
         <h1 className={`${color} rounded-md px-2 py-0.5 mb-2`}>{card.title}</h1>
@@ -93,9 +92,9 @@ export default function TaskCard({
               onClick={handleLoadChildBoard}
               variant={"outline"}
               disabled={isLoading || isFetching}
-              className="w-10 h-6 rounded-lg border-2 border-black hover:w-36 transform ease-in duration-150"
+              className="w-10 h-6 border-2 border-black/40  hover:w-22 transform ease-in duration-150"
             >
-              <ChevronDown size={20} className="animate-bounce translate-y-1" />
+              <ChevronDown size={20} className="animate-bounce translate-y-1 stroke-black/40 stroke-3" />
             </Button>
           )
         ) : (

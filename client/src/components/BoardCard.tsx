@@ -97,10 +97,10 @@ export default function BoardCard({
     >
       <div className="flex w-full justify-between items-center">
         <h1 className="font-medium text-xl">{boardMetadata.title}</h1>
-        <div className="flex">
+        <div className="flex rounded-full bg-red-300 justify-center items-center p-1">
           {boardMetadata.homeBoard ? (
             <Heart
-              className="cursor-pointer"
+              className="cursor-pointer translate-y-0.5"
               fill="red"
               stroke="none"
               size={heartSize}
@@ -108,7 +108,7 @@ export default function BoardCard({
           ) : (
             <Heart
               onClick={handleSetAsFavorite}
-              className="cursor-pointer"
+              className="cursor-pointer translate-y-0.5"
               fill="none"
               stroke="black"
               strokeWidth={2}

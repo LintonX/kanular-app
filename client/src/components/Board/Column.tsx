@@ -1,6 +1,6 @@
 import { KanbanCard, Stage } from "@/lib/types";
 import TaskCard from "./TaskCard";
-import { getStage, parseStage } from "@/lib/utils";
+import { getStage } from "@/lib/utils";
 import CreateTaskModal from "../CreateTaskModal";
 
 export default function Column({

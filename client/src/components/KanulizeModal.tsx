@@ -71,7 +71,7 @@ export default function KanulizeModal({
       }}
     >
       <DialogTrigger asChild>
-        <Button variant={"outline"} className="flex bg-none text-sm h-6">
+        <Button variant={"outline"} className="flex bg-none text-sm h-6 border-black/40 text-black/60">
           Kanulize
         </Button>
       </DialogTrigger>

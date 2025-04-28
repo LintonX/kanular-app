@@ -63,7 +63,7 @@ export default function ConfirmDeleteTaskModal({
     >
       <DialogTrigger asChild>
         <Trash2Icon
-          className="ml-0.5 cursor-pointer hover:scale-110 transform duration-200 ease-in-out"
+          className="ml-0.5 cursor-pointer hover:scale-110 transform duration-200 ease-in-out stroke-black/40"
           size={18}
         />
       </DialogTrigger>

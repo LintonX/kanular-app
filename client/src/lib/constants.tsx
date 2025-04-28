@@ -1,4 +1,4 @@
-import { SidebarItem, Stage } from "./types";
+import { SidebarItem } from "./types";
 
 export const ACTIVE_BOARD = "Active Board";
 export const BOARDS = "Boards";
