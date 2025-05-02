@@ -3,6 +3,7 @@ import {
   CompleteKanbanBoard,
   KanbanBoard,
   KanbanCard,
+  Stage,
   UserAccountDto,
   UserSessionState,
 } from "@/lib/types";
@@ -94,6 +95,16 @@ const userSessionSlice = createSlice({
         card.hasChildBoard = true;
       }
     },
+    lazyUpdateTaskColumn: (state, action: PayloadAction<{activeCardId: string, activeBoardId: string, toStage: Stage}>) => {
+      console.log("in lazyUpdateTaskColumn", action.payload);
+      const { activeCardId, activeBoardId, toStage } = action.payload;
+      const board = state.viewedBoards[activeBoardId];
+      if (!board?.kanbanCards) return;
+      const card = board.kanbanCards.find((card) => card.id === activeCardId && card.stage !== toStage);
+      if (!card) return;
+      console.log('made it here')
+      card.stage = toStage;
+    },
     lazyDeleteTask: (state, action: PayloadAction<string>) => {
       console.log("in lazyDeleteTask reducer", action.payload);
       const activeBoardId = state.activeBoardStack.peek();
@@ -131,6 +142,7 @@ export const {
   setLogOut,
   lazyCreateTask,
   lazyUpdateTaskHasChild,
+  lazyUpdateTaskColumn,
   lazyDeleteTask,
 } = userSessionSlice.actions;
 export default userSessionSlice.reducer;

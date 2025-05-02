@@ -61,7 +61,7 @@ export default function CreateTaskModal({
       }}
     >
       <DialogTrigger asChild>
-        <Button variant={"default"} className="h-7 text-xs w-full bg-secondary-black">
+        <Button variant={"default"} className="h-7 text-xs w-full bg-secondary-black mt-1">
           + Create Task
         </Button>
       </DialogTrigger>

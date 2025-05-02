@@ -11,6 +11,14 @@
   --color-primary-yellow: #FDCA40;
   --color-primary-green: #4CAF50;
   --color-primary-white: #E6E8E6;
+  --color-primary-blue-medium: #7d9bff;
+  --color-primary-red-medium: #f1777d;
+  --color-primary-yellow-medium: #ffe17c;
+  --color-primary-green-medium: #7fcf81;
+  --color-primary-blue-washed: #c8d2ff;
+  --color-primary-red-washed: #f9c7cc;
+  --color-primary-yellow-washed: #fff1c7;
+  --color-primary-green-washed: #c2e2c3;  
 }
 
 :root {
